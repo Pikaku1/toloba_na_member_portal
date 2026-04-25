@@ -1,5 +1,4 @@
 import { mutation } from "./_generated/server";
-import { v } from "convex/values";
 
 export const seed = mutation({
   args: {},
@@ -48,7 +47,7 @@ export const seed = mutation({
       updated_at: Date.now(),
     });
 
-    const hub2 = await ctx.db.insert("hub_collections", {
+    await ctx.db.insert("hub_collections", {
       title: "Education Scholarship Fund",
       slug: "scholarship-fund",
       amount_display: "Target: $10,000",
