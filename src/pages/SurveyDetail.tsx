@@ -1,17 +1,18 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useQuery, useMutation } from "convex/react";
+import { useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { useAuth } from "../context/AuthContext";
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
+import { useAdminReadQuery } from "../hooks/useDbQuery";
 
 const SurveyDetail: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { member } = useAuth();
 
-  const form = useQuery(api.surveys.getBySlug, { slug: slug || "" });
-  const questions = useQuery(api.surveys.getQuestions, 
+  const form = useAdminReadQuery(api.surveys.getBySlug, { slug: slug || "" });
+  const questions = useAdminReadQuery(api.surveys.getQuestions, 
     form ? { formId: form._id } : "skip"
   );
   

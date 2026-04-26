@@ -1,17 +1,18 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useQuery, useMutation } from "convex/react";
+import { useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { useAuth } from "../context/AuthContext";
 import { ArrowLeft, Copy, Check, ExternalLink, AlertTriangle } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
+import { useAdminReadQuery } from "../hooks/useDbQuery";
 
 const HubDetail: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { member } = useAuth();
 
-  const collection = useQuery(api.hub.getBySlug, { slug: slug || "" });
+  const collection = useAdminReadQuery(api.hub.getBySlug, { slug: slug || "" });
   const logContribution = useMutation(api.hub.logContribution);
 
   const [showPayment, setShowPayment] = useState(false);
