@@ -1,11 +1,11 @@
 import React from "react";
-import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { useNavigate } from "react-router-dom";
 import { ChevronRight, Users } from "lucide-react";
+import { useAdminReadQuery } from "../hooks/useDbQuery";
 
 const Hub: React.FC = () => {
-  const collections = useQuery(api.hub.listLive);
+  const collections = useAdminReadQuery(api.hub.listLive);
   const navigate = useNavigate();
 
   if (collections === undefined) {

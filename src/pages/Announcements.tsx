@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { useAdminReadQuery } from "../hooks/useDbQuery";
 
 const Announcements: React.FC = () => {
-  const announcements = useQuery(api.announcements.listLive);
+  const announcements = useAdminReadQuery(api.announcements.listLive);
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const formatDate = (timestamp: number) => {
