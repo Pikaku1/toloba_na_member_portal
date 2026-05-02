@@ -4,6 +4,7 @@ import { api } from "../../convex/_generated/api";
 import { useNavigate } from "react-router-dom";
 import { Heart, Users } from "lucide-react";
 import PageMasthead from "../components/Layout/PageMasthead";
+import ProgressBar from "../components/Hub/ProgressBar";
 
 const Hub: React.FC = () => {
   const collections = useQuery(api.hub.listLive);
@@ -37,48 +38,60 @@ const Hub: React.FC = () => {
             <p className="meta" style={{ marginTop: '4px' }}>Check back soon.</p>
           </div>
         ) : (
-          <div className="list" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            {collections.map((col: any, index: number) => (
-              <div 
-                key={col._id} 
-                className="card hub-card"
-                style={{ animationDelay: `${index * 50}ms` }}
-                onClick={() => navigate(`/hub/${col.slug}`)}
-              >
-                <div className="card-top-info">
-                  <div className="badge badge-live">
-                    <span className="pulse-dot"></span>
-                    LIVE
-                  </div>
-                  <span className="accent-font kicker">COLLECTION ✦</span>
-                </div>
+          <div className="list" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            {collections.map((col: any, index: number) => {
+              // Parse target amount for progress bar
+              const targetMatch = col.amount_display?.match(/\$([0-9,]+)/);
+              const targetValue = targetMatch ? parseInt(targetMatch[1].replace(/,/g, '')) : 0;
 
-                <h2 className="display-font card-title">{col.title}</h2>
-                
-                <div className="double-rule-small"></div>
-                
-                <div className="stats-grid">
-                  <div className="stat-item">
-                    <div className="display-font stat-value">${col.totalRaised.toLocaleString()}</div>
-                    <div className="accent-font stat-label">RAISED</div>
-                  </div>
-                  
-                  <div className="stat-item">
-                    <div className="display-font stat-value">
-                      <Users size={20} style={{ marginRight: "6px" }} />
-                      {col.contributorCount}
+              return (
+                <div 
+                  key={col._id} 
+                  className="card hub-card"
+                  style={{ animationDelay: `${index * 50}ms` }}
+                  onClick={() => navigate(`/hub/${col.slug}`)}
+                >
+                  <div className="card-top-info">
+                    <div className="badge badge-live">
+                      <span className="pulse-dot"></span>
+                      LIVE
                     </div>
-                    <div className="accent-font stat-label">CONTRIBUTORS</div>
+                    <span className="accent-font kicker">COLLECTION ✦</span>
                   </div>
-                </div>
 
-                {col.amount_display && (
-                  <div className="target-text">
-                    Target: {col.amount_display}
+                  <h2 className="display-font card-title">{col.title}</h2>
+                  
+                  <div className="double-rule-small"></div>
+                  
+                  {targetValue > 0 && (
+                    <div className="progress-section">
+                      <ProgressBar current={col.totalRaised} target={targetValue} />
+                    </div>
+                  )}
+
+                  <div className="stats-grid">
+                    <div className="stat-item">
+                      <div className="display-font stat-value">${col.totalRaised.toLocaleString()}</div>
+                      <div className="accent-font stat-label">RAISED</div>
+                    </div>
+                    
+                    <div className="stat-item">
+                      <div className="display-font stat-value">
+                        <Users size={20} style={{ marginRight: "6px" }} />
+                        {col.contributorCount}
+                      </div>
+                      <div className="accent-font stat-label">CONTRIBUTORS</div>
+                    </div>
                   </div>
-                )}
-              </div>
-            ))}
+
+                  {col.amount_display && (
+                    <div className="target-text accent-font">
+                      GOAL: {col.amount_display}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
@@ -139,6 +152,10 @@ const Hub: React.FC = () => {
           margin-bottom: 20px;
         }
 
+        .progress-section {
+          margin-bottom: 24px;
+        }
+
         .stats-grid {
           display: grid;
           grid-template-columns: 1fr 1fr;
@@ -168,10 +185,10 @@ const Hub: React.FC = () => {
 
         .target-text {
           margin-top: 16px;
-          font-family: var(--font-ui);
-          font-size: 13px;
-          color: var(--ink-muted);
-          font-style: italic;
+          font-size: 10px;
+          font-weight: 600;
+          color: var(--gold-dark);
+          letter-spacing: 0.05em;
         }
 
         .empty-state {

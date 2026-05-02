@@ -4,6 +4,9 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { useAuth } from "../context/AuthContext";
 import { ArrowLeft, Copy, Check, ExternalLink, AlertTriangle } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
+import ProgressBar from "../components/Hub/ProgressBar";
+import ContributionChart from "../components/Hub/ContributionChart";
 
 const HubDetail: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -71,6 +74,11 @@ const HubDetail: React.FC = () => {
     }
   };
 
+  // Mock trend data for demonstration
+  const trendData = [1200, 1800, 1600, 2400, 3100, 2800, 3600, 4200];
+  const targetMatch = collection.amount_display?.match(/\$([0-9,]+)/);
+  const targetValue = targetMatch ? parseInt(targetMatch[1].replace(/,/g, '')) : 0;
+
   return (
     <div className="hub-detail-page">
       <header className="sticky-header">
@@ -91,9 +99,6 @@ const HubDetail: React.FC = () => {
           <div className="hero-content">
             <span className="accent-font kicker">COLLECTION</span>
             <h1 className="display-font hero-title">{collection.title}</h1>
-            {collection.amount_display && (
-              <p className="hero-subtitle">Target: {collection.amount_display}</p>
-            )}
             
             <div className="ornament-rule" style={{ margin: '24px auto' }}>
               <span style={{ fontSize: '12px' }}>✦</span>
@@ -109,10 +114,20 @@ const HubDetail: React.FC = () => {
                 <div className="accent-font hero-stat-label">CONTRIBUTORS</div>
               </div>
             </div>
+
+            {targetValue > 0 && (
+              <div className="hero-progress">
+                <ProgressBar current={collection.totalRaised} target={targetValue} />
+                <div className="target-label accent-font">TARGET: {collection.amount_display}</div>
+              </div>
+            )}
           </div>
 
           <div className="double-rule"></div>
         </div>
+
+        {/* Trend Chart */}
+        <ContributionChart data={trendData} />
 
         {/* Contributors Section */}
         <section className="contributors-section">
@@ -145,19 +160,41 @@ const HubDetail: React.FC = () => {
               <div className="accent-font kicker" style={{ color: 'var(--gold-dark)', marginBottom: '16px' }}>PAY VIA ZELLE</div>
               <div className="gold-rule-small"></div>
 
-              <button className="btn btn-gold-ghost" onClick={() => window.open(collection.payment_url, '_blank')} style={{ marginBottom: '24px' }}>
-                OPEN ZELLE <ExternalLink size={16} />
-              </button>
+              {/* QR Code Section */}
+              <div className="qr-spread">
+                <div className="qr-frame">
+                  <QRCodeSVG 
+                    value={collection.payment_url} 
+                    size={140}
+                    fgColor="#001529" 
+                    level="H"
+                  />
+                </div>
+                <div className="qr-actions">
+                  <p className="meta" style={{ fontSize: '12px', marginBottom: '12px' }}>Scan the code or use the link below to open Zelle.</p>
+                  <button className="btn-gold-ghost" onClick={() => window.open(collection.payment_url, '_blank')}>
+                    <span style={{ fontSize: '14px' }}>OPEN ZELLE</span> 
+                    <ExternalLink size={16} />
+                  </button>
+                </div>
+              </div>
 
-              <div className="field-label" style={{ color: 'var(--gold-dark)' }}>MEMO</div>
+              <div className="gold-rule-small" style={{ margin: '24px 0' }}></div>
+
+              <div className="field-label" style={{ color: 'var(--gold-dark)', fontSize: '10px' }}>REQUIRED MEMO</div>
               <div className="memo-container" onClick={handleCopy}>
-                <code className="memo-text">{collection.desired_memo}</code>
-                {copied ? <Check size={16} style={{ color: 'var(--green)' }} /> : <Copy size={16} style={{ color: 'var(--gold-dark)' }} />}
+                <div className="memo-left">
+                  <code className="memo-text">{collection.desired_memo}</code>
+                  <p className="memo-note">Copy and paste this into Zelle</p>
+                </div>
+                <div className="memo-right">
+                  {copied ? <Check size={18} style={{ color: 'var(--green)' }} /> : <Copy size={18} style={{ color: 'var(--gold-dark)' }} />}
+                </div>
               </div>
 
               <div className="warning-panel">
-                <AlertTriangle size={18} />
-                <p>Send the payment first, then log it in the form below.</p>
+                <AlertTriangle size={20} className="warning-icon" />
+                <p>Ensure the memo matches exactly for automated tracking.</p>
               </div>
             </div>
 
@@ -304,16 +341,11 @@ const HubDetail: React.FC = () => {
           margin-bottom: 4px;
         }
 
-        .hero-subtitle {
-          font-family: var(--font-ui);
-          font-size: 13px;
-          color: rgba(255,255,255,0.55);
-        }
-
         .hero-stats {
           display: flex;
           justify-content: center;
           gap: 48px;
+          margin-bottom: 24px;
         }
 
         .hero-stat-value {
@@ -327,6 +359,19 @@ const HubDetail: React.FC = () => {
           font-size: 9px;
           font-weight: 600;
           letter-spacing: 0.1em;
+          margin-top: -4px;
+        }
+
+        .hero-progress {
+          max-width: 320px;
+          margin: 0 auto;
+          text-align: left;
+        }
+
+        .target-label {
+          color: rgba(255, 255, 255, 0.5);
+          font-size: 9px;
+          text-align: center;
           margin-top: -4px;
         }
 
@@ -395,12 +440,36 @@ const HubDetail: React.FC = () => {
           text-align: center;
         }
 
+        .qr-spread {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 20px;
+          margin-bottom: 12px;
+        }
+
+        .qr-frame {
+          background: var(--white);
+          padding: 12px;
+          border: 1px solid var(--gold);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .qr-actions {
+          width: 100%;
+        }
+
         .btn-gold-ghost {
           background: transparent;
           border: 1.5px solid var(--gold);
           color: var(--gold-dark);
-          height: 52px;
+          height: 48px;
           width: 100%;
+          max-width: 280px;
+          margin: 0 auto;
           border-radius: var(--radius-md);
           font-family: var(--font-ui);
           font-weight: 600;
@@ -408,41 +477,81 @@ const HubDetail: React.FC = () => {
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 8px;
+          gap: 12px;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+
+        .btn-gold-ghost:hover {
+          background: var(--gold-pale);
+        }
+
+        .btn-gold-ghost svg {
+          width: 18px;
+          height: 18px;
+          flex-shrink: 0;
         }
 
         .memo-container {
-          background: var(--cream-deep);
+          background: var(--white);
           border: 1.5px solid var(--gold);
-          padding: 12px 16px;
+          padding: 16px;
           border-radius: var(--radius-sm);
           display: flex;
           justify-content: space-between;
           align-items: center;
           cursor: pointer;
           margin-top: 8px;
-          margin-bottom: 24px;
+          margin-bottom: 20px;
+          text-align: left;
+          transition: all 0.2s;
+        }
+
+        .memo-container:active {
+          transform: scale(0.99);
+          background: var(--gold-pale);
+        }
+
+        .memo-left {
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
         }
 
         .memo-text {
           font-family: 'Courier New', Courier, monospace;
-          font-size: 15px;
+          font-size: 16px;
           font-weight: 700;
-          color: var(--ink);
+          color: var(--navy);
+          letter-spacing: 0.02em;
+        }
+
+        .memo-note {
+          font-size: 10px;
+          color: var(--ink-muted);
+          font-style: italic;
         }
 
         .warning-panel {
           background: var(--warning-bg);
-          border: 1px solid var(--gold);
+          border: 1px solid rgba(201, 168, 76, 0.3);
           color: var(--warning-text);
           padding: 12px 16px;
           border-radius: var(--radius-md);
           display: flex;
           align-items: center;
-          gap: 12px;
-          font-size: 13px;
+          gap: 16px;
+          font-size: 12px;
           text-align: left;
           line-height: 1.4;
+          margin-top: 12px;
+        }
+
+        .warning-icon {
+          width: 20px;
+          height: 20px;
+          flex-shrink: 0;
+          color: var(--gold-dark);
         }
 
         .log-form {

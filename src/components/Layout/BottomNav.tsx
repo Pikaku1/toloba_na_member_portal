@@ -1,8 +1,16 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom"; // Added useLocation
 import { Bell, ClipboardList, Heart, User } from "lucide-react";
 
 const BottomNav: React.FC = () => {
+  const { pathname } = useLocation();
+
+  // Logic: Hide if we are on a detail page (e.g., /hub/my-collection)
+  // but keep it if we are on the main list page (/hub)
+  const isHubDetailPage = pathname.startsWith("/hub/") && pathname !== "/hub";
+
+  if (isHubDetailPage) return null;
+
   return (
     <nav className="bottom-nav">
       <NavLink
@@ -81,10 +89,6 @@ const BottomNav: React.FC = () => {
 
         .nav-item svg {
           stroke-width: 2px;
-        }
-
-        .nav-item.active svg {
-          /* Could use filled icons if lucide-react supports them easily, or just keep stroke */
         }
       `}</style>
     </nav>
