@@ -1,14 +1,24 @@
 import React, { useState } from "react";
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, Bell } from "lucide-react";
+import PageMasthead from "../components/Layout/PageMasthead";
 
 const Announcements: React.FC = () => {
   const announcements = useQuery(api.announcements.listLive);
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  const formatDate = (timestamp: number) => {
+  const formatDate = (timestamp: number, full: boolean = false) => {
     const date = new Date(timestamp);
+    if (full) {
+      return date.toLocaleDateString(undefined, { 
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long', 
+        day: 'numeric' 
+      });
+    }
+    
     const now = new Date();
     const diffDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 3600 * 24));
     
@@ -23,99 +33,178 @@ const Announcements: React.FC = () => {
   };
 
   if (announcements === undefined) {
-    return <div className="loading">Loading announcements...</div>;
+    return (
+      <div style={{ height: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="loading-spinner" style={{ color: 'var(--navy)' }}></div>
+      </div>
+    );
   }
 
   return (
-    <div className="announcements-page">
-      <header className="page-header">
-        <h1>Announcements</h1>
-      </header>
+    <div className="announcements-page page-transition">
+      <PageMasthead 
+        title="Announcements" 
+        subtitle="Latest from the organization"
+        kicker="DAERAT TOLOBA"
+        variant="navy"
+      />
 
-      <div className="list">
+      <div className="container" style={{ paddingTop: '24px' }}>
         {announcements.length === 0 ? (
-          <div className="empty-state">No announcements yet.</div>
+          <div className="empty-state">
+            <Bell size={44} style={{ color: 'var(--gold)', marginBottom: '12px' }} />
+            <div className="ornament-rule" style={{ maxWidth: '160px', margin: '0 auto 16px' }}>
+              <span style={{ fontSize: '14px' }}>✦</span>
+            </div>
+            <h3 className="display-font" style={{ fontStyle: 'italic', color: 'var(--ink-muted)' }}>No announcements yet.</h3>
+            <p className="meta" style={{ marginTop: '4px' }}>Check back soon.</p>
+          </div>
         ) : (
-          announcements.map((ann: any) => (
-            <div 
-              key={ann._id} 
-              className={`card announcement-card ${expandedId === ann._id ? "expanded" : ""}`}
-              onClick={() => setExpandedId(expandedId === ann._id ? null : ann._id)}
-            >
-              <div className="card-header">
-                <div className="title-row">
-                  <h2>{ann.title}</h2>
-                  <span className="meta">{formatDate(ann.created_at)}</span>
+          <div className="list" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            {announcements.map((ann: any, index: number) => (
+              <div 
+                key={ann._id} 
+                className={`card announcement-card ${expandedId === ann._id ? "expanded" : ""}`}
+                style={{ animationDelay: `${index * 50}ms` }}
+                onClick={() => setExpandedId(expandedId === ann._id ? null : ann._id)}
+              >
+                <div className="card-top-info">
+                  <span className="accent-font kicker">ANNOUNCEMENT</span>
+                  <span className="ornament">✦</span>
                 </div>
-                <div className="preview">
-                  {ann.body.substring(0, 80)}
-                  {ann.body.length > 80 && "..."}
-                </div>
-              </div>
-              
-              {expandedId === ann._id && (
-                <div className="full-body">
+
+                <h2 className="display-font card-title">{ann.title}</h2>
+                
+                <div className="gold-rule-small"></div>
+                
+                <div className={`preview-content ${expandedId === ann._id ? "expanded" : ""}`}>
                   {ann.body}
                 </div>
-              )}
-              
-              <div className="expand-indicator">
-                {expandedId === ann._id ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                
+                <div className="card-footer">
+                  <span className="accent-font date-text">
+                    {formatDate(ann.created_at, expandedId === ann._id)}
+                  </span>
+                  
+                  <div className="expand-action">
+                    <span className="accent-font">{expandedId === ann._id ? "LESS" : "MORE"}</span>
+                    {expandedId === ann._id ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                  </div>
+                </div>
+
+                {expandedId === ann._id && (
+                  <div className="ornament-rule" style={{ marginTop: '20px', marginBottom: '0' }}>
+                    <span style={{ fontSize: '10px' }}>✦</span>
+                  </div>
+                )}
               </div>
-            </div>
-          ))
+            ))}
+          </div>
         )}
       </div>
 
       <style>{`
-        .page-header {
-          position: sticky;
-          top: 0;
-          background: var(--background);
-          padding: 20px 0;
-          margin-bottom: 8px;
-          z-index: 10;
+        .announcements-page {
+          background-color: var(--cream);
+          min-height: 100vh;
         }
+
         .announcement-card {
           cursor: pointer;
-          transition: all 0.2s ease;
-          position: relative;
+          overflow: hidden;
         }
-        .title-row {
+
+        .card-top-info {
           display: flex;
           justify-content: space-between;
-          align-items: baseline;
-          margin-bottom: 4px;
-          gap: 12px;
+          align-items: center;
+          margin-bottom: 12px;
         }
-        .preview {
-          font-size: 14px;
-          color: var(--text-secondary);
-          line-height: 1.4;
+
+        .kicker {
+          color: var(--gold-dark);
+          font-size: 10px;
+          font-weight: 600;
+          letter-spacing: 0.16em;
         }
-        .full-body {
-          margin-top: 12px;
-          padding-top: 12px;
-          border-top: 1px solid var(--border);
+
+        .ornament {
+          color: var(--gold);
+          font-size: 12px;
+        }
+
+        .card-title {
+          font-size: 18px;
+          font-weight: 700;
+          color: var(--ink);
+          margin-bottom: 8px;
+          line-height: 1.3;
+        }
+
+        .gold-rule-small {
+          height: 1px;
+          background: linear-gradient(to right, var(--gold), transparent);
+          width: 60px;
+          margin-bottom: 16px;
+        }
+
+        .preview-content {
+          font-family: var(--font-ui);
           font-size: 15px;
+          color: var(--ink-secondary);
+          line-height: 1.6;
+          max-height: 4.8em; /* Roughly 3 lines */
+          overflow: hidden;
+          transition: max-height 0.3s ease, opacity 0.3s ease;
+          position: relative;
+        }
+
+        .preview-content:not(.expanded)::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          height: 1.6em;
+          background: linear-gradient(to bottom, transparent, var(--white));
+        }
+
+        .preview-content.expanded {
+          max-height: 2000px;
           white-space: pre-wrap;
-          color: var(--text-primary);
         }
-        .expand-indicator {
+
+        .card-footer {
           display: flex;
-          justify-content: center;
-          margin-top: 8px;
-          color: var(--text-muted);
+          justify-content: space-between;
+          align-items: center;
+          margin-top: 16px;
+          padding-top: 12px;
+          border-top: 1px solid rgba(232, 223, 200, 0.5); /* var(--parchment) light */
         }
+
+        .date-text {
+          color: var(--gold-dark);
+          font-size: 10px;
+          letter-spacing: 0.05em;
+        }
+
+        .expand-action {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          color: var(--gold-dark);
+        }
+
+        .expand-action span {
+          font-size: 10px;
+          font-weight: 600;
+          letter-spacing: 0.1em;
+        }
+
         .empty-state {
           text-align: center;
-          color: var(--text-secondary);
-          margin-top: 48px;
-        }
-        .loading {
-          text-align: center;
-          padding: 40px;
-          color: var(--text-secondary);
+          padding: 60px 0;
         }
       `}</style>
     </div>
