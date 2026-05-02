@@ -3,7 +3,6 @@ import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { ChevronDown, ChevronUp, Bell } from "lucide-react";
 import PageMasthead from "../components/Layout/PageMasthead";
-import FeaturedQuote from "../components/Announcements/FeaturedQuote";
 
 const Announcements: React.FC = () => {
   const announcements = useQuery(api.announcements.listLive);
