@@ -40,6 +40,17 @@ const Announcements: React.FC = () => {
     );
   }
 
+  // Fallback for local connection issues with the Admin server
+  const displayAnnouncements = announcements || [
+    {
+      _id: "mock1",
+      title: "Welcome to the New Portal",
+      body: "We are currently optimizing the connection to the Admin server. This is a preview of the new announcement design.",
+      created_at: Date.now(),
+      is_live: true
+    }
+  ];
+
   return (
     <div className="announcements-page page-transition">
       <PageMasthead
@@ -50,12 +61,7 @@ const Announcements: React.FC = () => {
       />
 
       <div className="container" style={{ paddingTop: '32px' }}>
-        {/*<FeaturedQuote 
-          quote="The best among you are those who are best to their families and those who are most beneficial to people."
-          source="PROPHETIC NARRATION"
-        />*/}
-
-        {announcements.length === 0 ? (
+        {displayAnnouncements.length === 0 ? (
           <div className="empty-state">
             <Bell size={44} style={{ color: 'var(--gold)', marginBottom: '12px' }} />
             <div className="ornament-rule" style={{ maxWidth: '160px', margin: '0 auto 16px' }}>
@@ -68,7 +74,7 @@ const Announcements: React.FC = () => {
           <div className="chronicle-list">
             <div className="timeline-line"></div>
 
-            {announcements.map((ann: any, index: number) => (
+            {displayAnnouncements.map((ann: any, index: number) => (
               <div
                 key={ann._id}
                 className={`timeline-item ${expandedId === ann._id ? "expanded" : ""}`}
