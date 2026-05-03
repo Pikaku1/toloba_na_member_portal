@@ -1,17 +1,13 @@
-import React, { useMemo } from "react";
-import { useQuery } from "convex/react";
+import React from "react";
 import { api } from "../../convex/_generated/api";
 import { useNavigate } from "react-router-dom";
 import { Heart, Users } from "lucide-react";
 import PageMasthead from "../components/Layout/PageMasthead";
 import ProgressBar from "../components/Hub/ProgressBar";
+import { useAdminReadQuery } from "../hooks/useDbQuery";
 
 const Hub: React.FC = () => {
-  const allCollections = useQuery(api.hub.listCollections);
-  const collections = useMemo(() => 
-    allCollections?.filter(c => c.is_live) ?? undefined,
-    [allCollections]
-  );
+  const collections = useAdminReadQuery(api.hub.listLive);
   const navigate = useNavigate();
 
   if (collections === undefined) {

@@ -1,18 +1,13 @@
-import React, { useMemo } from "react";
-import { useQuery } from "convex/react";
+import React from "react";
 import { api } from "../../convex/_generated/api";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { FileText } from "lucide-react";
-import { useMemberQuery } from "../hooks/useDbQuery";
+import { useAdminReadQuery, useMemberQuery } from "../hooks/useDbQuery";
 import PageMasthead from "../components/Layout/PageMasthead";
 
 const Surveys: React.FC = () => {
-  const allForms = useQuery(api.surveys.listForms);
-  const forms = useMemo(() => 
-    allForms?.filter(f => f.is_live) ?? undefined,
-    [allForms]
-  );
+  const forms = useAdminReadQuery(api.surveys.listLive);
   const { member } = useAuth();
 
   if (forms === undefined) {
