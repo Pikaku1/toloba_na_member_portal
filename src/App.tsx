@@ -21,7 +21,7 @@ function App() {
           <BrowserRouter>
             <Routes>
               <Route path="/login" element={<Login />} />
-
+              
               <Route element={<ProtectedLayout />}>
                 <Route path="/" element={<Navigate to="/announcements" replace />} />
                 <Route path="/announcements" element={<Announcements />} />
