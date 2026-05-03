@@ -1,13 +1,13 @@
 import React from "react";
-import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { ClipboardList } from "lucide-react";
+import { useAdminReadQuery, useMemberQuery } from "../hooks/useDbQuery";
 import PageMasthead from "../components/Layout/PageMasthead";
 
 const Surveys: React.FC = () => {
-  const forms = useQuery(api.surveys.listLive);
+  const forms = useAdminReadQuery(api.surveys.listLive);
   const { member } = useAuth();
 
   if (forms === undefined) {
@@ -68,7 +68,7 @@ const Surveys: React.FC = () => {
 
 const SurveyCard: React.FC<{ form: any; memberEmail: string; index: number }> = ({ form, memberEmail, index }) => {
   const navigate = useNavigate();
-  const submission = useQuery(api.surveys.getOwnSubmission, 
+  const submission = useMemberQuery(api.surveys.getOwnSubmission, 
     memberEmail ? { formId: form._id, email: memberEmail } : "skip"
   );
   
