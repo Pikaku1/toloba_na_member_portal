@@ -20,9 +20,7 @@ export function getConvexClient(source: DbSource): ConvexReactClient {
     return memberConvex;
   }
   if (!adminConvex) {
-    throw new Error(
-      "Missing VITE_CONVEX_URL_ADMIN. Admin reads require an admin Convex deployment URL.",
-    );
+    return memberConvex;
   }
   return adminConvex;
 }

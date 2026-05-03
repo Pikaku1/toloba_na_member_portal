@@ -2,6 +2,28 @@ import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
 /**
+ * List all forms.
+ * Filtering by is_live happens on the frontend.
+ */
+export const listForms = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db.query("forms").collect();
+  },
+});
+
+/**
+ * List all questions.
+ * Filtering by form_id happens on the frontend.
+ */
+export const listQuestions = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db.query("questions").collect();
+  },
+});
+
+/**
  * List all live, non-archived forms.
  */
 export const listLive = query({

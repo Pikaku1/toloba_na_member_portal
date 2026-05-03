@@ -2,6 +2,28 @@ import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
 /**
+ * List all hub collections.
+ * Filtering by is_live happens on the frontend.
+ */
+export const listCollections = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db.query("hub_collections").collect();
+  },
+});
+
+/**
+ * List all hub contributions.
+ * Filtering happens on the frontend.
+ */
+export const listContributions = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db.query("hub_contributions").collect();
+  },
+});
+
+/**
  * List all live, non-archived hub collections.
  * Includes total raised and contributor count for each.
  */
