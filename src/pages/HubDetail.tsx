@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useMutation } from "convex/react";
+import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { useAuth } from "../context/AuthContext";
 import { ArrowLeft, Copy, Check, ExternalLink, AlertTriangle } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
-import { useAdminReadQuery } from "../hooks/useDbQuery";
 import ProgressBar from "../components/Hub/ProgressBar";
 import ContributionChart from "../components/Hub/ContributionChart";
 
@@ -14,7 +13,30 @@ const HubDetail: React.FC = () => {
   const navigate = useNavigate();
   const { member } = useAuth();
 
-  const collection = useAdminReadQuery(api.hub.getBySlug, { slug: slug || "" });
+  const allCollections = useQuery(api.hub.listCollections);
+  const collection = useMemo(() => 
+    allCollections?.find(c => c.slug === slug && c.is_live),
+    [allCollections, slug]
+  );
+  
+  const allContributions = useQuery(api.hub.listContributions);
+  const { totalRaised, contributorCount, contributorNames } = useMemo(() => {
+    if (!collection || !allContributions) {
+      return { totalRaised: 0, contributorCount: 0, contributorNames: [] };
+    }
+    
+    const contributions = allContributions.filter(c => c.collection_id === collection._id);
+    const totalRaised = contributions.reduce((sum, c) => sum + c.amount, 0);
+    const contributorIds = new Set(contributions.map(c => c.member_id));
+    
+    // For now, just return the count. To get names, we'd need to fetch members data
+    return {
+      totalRaised,
+      contributorCount: contributorIds.size,
+      contributorNames: []
+    };
+  }, [collection, allContributions]);
+  
   const logContribution = useMutation(api.hub.logContribution);
 
   const [showPayment, setShowPayment] = useState(false);

@@ -1,6 +1,17 @@
 import { query } from "./_generated/server";
 
 /**
+ * List all announcements.
+ * Filtering by is_live happens on the frontend.
+ */
+export const list = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db.query("announcements").collect();
+  },
+});
+
+/**
  * List all live, non-archived announcements.
  * Ordered by created_at descending.
  */

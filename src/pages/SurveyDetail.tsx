@@ -1,19 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useMutation } from "convex/react";
+import { useQuery, useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { useAuth } from "../context/AuthContext";
 import { ArrowLeft } from "lucide-react";
-import { useAdminReadQuery } from "../hooks/useDbQuery";
 
 const SurveyDetail: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { member } = useAuth();
 
-  const form = useAdminReadQuery(api.surveys.getBySlug, { slug: slug || "" });
-  const questions = useAdminReadQuery(api.surveys.getQuestions, 
-    form ? { formId: form._id } : "skip"
+  const allForms = useQuery(api.surveys.listForms);
+  const form = useMemo(() => 
+    allForms?.find(f => f.slug === slug && f.is_live),
+    [allForms, slug]
+  );
+  
+  const allQuestions = useQuery(api.surveys.listQuestions);
+  const questions = useMemo(() => 
+    form ? allQuestions?.filter(q => q.form_id === form._id).sort((a, b) => a.order - b.order) ?? [] : [],
+    [form, allQuestions]
   );
   
   const submitSurvey = useMutation(api.surveys.submit);

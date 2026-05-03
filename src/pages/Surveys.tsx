@@ -1,13 +1,18 @@
-import React from "react";
+import React, { useMemo } from "react";
+import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { ClipboardList } from "lucide-react";
-import { useAdminReadQuery, useMemberQuery } from "../hooks/useDbQuery";
+import { FileText } from "lucide-react";
+import { useMemberQuery } from "../hooks/useDbQuery";
 import PageMasthead from "../components/Layout/PageMasthead";
 
 const Surveys: React.FC = () => {
-  const forms = useAdminReadQuery(api.surveys.listLive);
+  const allForms = useQuery(api.surveys.listForms);
+  const forms = useMemo(() => 
+    allForms?.filter(f => f.is_live) ?? undefined,
+    [allForms]
+  );
   const { member } = useAuth();
 
   if (forms === undefined) {
@@ -30,7 +35,7 @@ const Surveys: React.FC = () => {
       <div className="container" style={{ paddingTop: '24px' }}>
         {forms.length === 0 ? (
           <div className="empty-state">
-            <ClipboardList size={44} style={{ color: 'var(--gold)', marginBottom: '12px' }} />
+            <FileText size={44} style={{ color: 'var(--gold)', marginBottom: '12px' }} />
             <div className="ornament-rule" style={{ maxWidth: '160px', margin: '0 auto 16px' }}>
               <span style={{ fontSize: '14px' }}>✦</span>
             </div>

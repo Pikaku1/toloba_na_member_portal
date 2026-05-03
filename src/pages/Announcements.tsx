@@ -1,11 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
+import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { ChevronDown, ChevronUp, Bell } from "lucide-react";
-import { useAdminReadQuery } from "../hooks/useDbQuery";
 import PageMasthead from "../components/Layout/PageMasthead";
 
 const Announcements: React.FC = () => {
-  const announcements = useAdminReadQuery(api.announcements.listLive);
+  const allAnnouncements = useQuery(api.announcements.list);
+  const announcements = useMemo(() => 
+    allAnnouncements?.filter(a => a.is_live).sort((a, b) => (b.created_at ?? 0) - (a.created_at ?? 0)) ?? undefined,
+    [allAnnouncements]
+  );
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const formatDate = (timestamp: number, full: boolean = false) => {
