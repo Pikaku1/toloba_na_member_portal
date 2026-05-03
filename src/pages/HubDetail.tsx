@@ -6,8 +6,6 @@ import { useAuth } from "../context/AuthContext";
 import { ArrowLeft, Copy, Check, ExternalLink, AlertTriangle } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { useAdminReadQuery } from "../hooks/useDbQuery";
-import ProgressBar from "../components/Hub/ProgressBar";
-import ContributionChart from "../components/Hub/ContributionChart";
 
 const HubDetail: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();

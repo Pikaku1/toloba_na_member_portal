@@ -1,10 +1,8 @@
 import React from "react";
 import { api } from "../../convex/_generated/api";
 import { useNavigate } from "react-router-dom";
-import { Heart, Users } from "lucide-react";
+import { ChevronRight, Users } from "lucide-react";
 import { useAdminReadQuery } from "../hooks/useDbQuery";
-import PageMasthead from "../components/Layout/PageMasthead";
-import ProgressBar from "../components/Hub/ProgressBar";
 
 const Hub: React.FC = () => {
   const collections = useAdminReadQuery(api.hub.listLive);

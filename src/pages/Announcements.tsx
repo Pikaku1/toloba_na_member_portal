@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { api } from "../../convex/_generated/api";
-import { ChevronDown, ChevronUp, Bell } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { useAdminReadQuery } from "../hooks/useDbQuery";
-import PageMasthead from "../components/Layout/PageMasthead";
 
 const Announcements: React.FC = () => {
   const announcements = useAdminReadQuery(api.announcements.listLive);

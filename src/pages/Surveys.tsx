@@ -2,9 +2,8 @@ import React from "react";
 import { api } from "../../convex/_generated/api";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { ClipboardList } from "lucide-react";
+import { CheckCircle2, ChevronRight } from "lucide-react";
 import { useAdminReadQuery, useMemberQuery } from "../hooks/useDbQuery";
-import PageMasthead from "../components/Layout/PageMasthead";
 
 const Surveys: React.FC = () => {
   const forms = useAdminReadQuery(api.surveys.listLive);
@@ -68,6 +67,7 @@ const Surveys: React.FC = () => {
 
 const SurveyCard: React.FC<{ form: any; memberEmail: string; index: number }> = ({ form, memberEmail, index }) => {
   const navigate = useNavigate();
+  // Check if already submitted
   const submission = useMemberQuery(api.surveys.getOwnSubmission, 
     memberEmail ? { formId: form._id, email: memberEmail } : "skip"
   );
