@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { useAuth } from "../context/AuthContext";
 import { ArrowLeft } from "lucide-react";
-import { useAdminReadQuery } from "../hooks/useDbQuery";
+import { useAdminMutation, useAdminReadQuery } from "../hooks/useDbQuery";
 
 const SurveyDetail: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -37,7 +36,7 @@ const SurveyDetail: React.FC = () => {
   const stableForm = form === undefined ? resolvedForm : form;
   const stableQuestions = questions === undefined ? resolvedQuestions : questions;
   
-  const submitSurvey = useMutation(api.surveys.submit);
+  const submitSurvey = useAdminMutation(api.surveys.submit);
 
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);

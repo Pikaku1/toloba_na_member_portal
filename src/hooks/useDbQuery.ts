@@ -1,4 +1,4 @@
-import { useMemo, useSyncExternalStore } from "react";
+import { useCallback, useMemo, useSyncExternalStore } from "react";
 import type { FunctionReference } from "convex/server";
 import { getConvexClient, type DbSource } from "../convexClients";
 
@@ -45,4 +45,28 @@ export function useMemberQuery<Query extends FunctionReference<"query">>(
   args?: QueryArgs<Query>,
 ): Query["_returnType"] | undefined {
   return useDbQuery("member", query, args);
+}
+
+export function useDbMutation<Mutation extends FunctionReference<"mutation">>(
+  source: DbSource,
+  mutation: Mutation,
+): (args: Mutation["_args"]) => Promise<Mutation["_returnType"]> {
+  const client = useMemo(() => getConvexClient(source), [source]);
+
+  return useCallback(
+    (args: Mutation["_args"]) => client.mutation(mutation, args),
+    [client, mutation],
+  );
+}
+
+export function useAdminMutation<Mutation extends FunctionReference<"mutation">>(
+  mutation: Mutation,
+): (args: Mutation["_args"]) => Promise<Mutation["_returnType"]> {
+  return useDbMutation("admin", mutation);
+}
+
+export function useMemberMutation<Mutation extends FunctionReference<"mutation">>(
+  mutation: Mutation,
+): (args: Mutation["_args"]) => Promise<Mutation["_returnType"]> {
+  return useDbMutation("member", mutation);
 }
