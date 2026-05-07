@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
@@ -16,6 +16,26 @@ const SurveyDetail: React.FC = () => {
     api.surveys.getQuestions,
     form ? { formId: form._id } : "skip",
   );
+
+  // Keep the last resolved query results to avoid UI flicker when
+  // Convex briefly reports undefined during reactive updates.
+  const [resolvedForm, setResolvedForm] = useState<typeof form>(undefined);
+  const [resolvedQuestions, setResolvedQuestions] = useState<typeof questions>(undefined);
+
+  useEffect(() => {
+    if (form !== undefined) {
+      setResolvedForm(form);
+    }
+  }, [form]);
+
+  useEffect(() => {
+    if (questions !== undefined) {
+      setResolvedQuestions(questions);
+    }
+  }, [questions]);
+
+  const stableForm = form === undefined ? resolvedForm : form;
+  const stableQuestions = questions === undefined ? resolvedQuestions : questions;
   
   const submitSurvey = useMutation(api.surveys.submit);
 
@@ -24,7 +44,7 @@ const SurveyDetail: React.FC = () => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  if (form === undefined || questions === undefined) {
+  if (stableForm === undefined || stableQuestions === undefined) {
     return (
       <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div className="loading-spinner" style={{ color: 'var(--green)' }}></div>
@@ -32,7 +52,7 @@ const SurveyDetail: React.FC = () => {
     );
   }
 
-  if (form === null) {
+  if (stableForm === null) {
     return (
       <div className="container" style={{ textAlign: 'center', paddingTop: '100px' }}>
         <h2 className="display-font">Survey not found</h2>
@@ -58,7 +78,7 @@ const SurveyDetail: React.FC = () => {
       }));
 
       await submitSurvey({
-        formId: form._id,
+        formId: stableForm._id,
         respondent_email: member?.email,
         answers: formattedAnswers
       });
@@ -71,7 +91,7 @@ const SurveyDetail: React.FC = () => {
     }
   };
 
-  const isFormValid = questions.every(q => !q.required || answers[q._id]);
+  const isFormValid = stableQuestions.every(q => !q.required || answers[q._id]);
 
   if (isSuccess) {
     return (
@@ -124,14 +144,14 @@ const SurveyDetail: React.FC = () => {
           <button onClick={() => navigate("/surveys")} className="back-link">
             <ArrowLeft size={20} />
           </button>
-          <h1 className="display-font">{form.title}</h1>
+          <h1 className="display-font">{stableForm.title}</h1>
         </div>
         <div className="double-rule-thin"></div>
       </header>
 
       <div className="container form-container">
         <form onSubmit={handleSubmit}>
-          {questions.map((q: any) => (
+          {stableQuestions.map((q: any) => (
             <div key={q._id} className="question-block">
               <div className="field-label" style={{ color: 'var(--gold-dark)' }}>
                 {q.label} {q.required && <span style={{ color: 'var(--error)' }}>*</span>}
