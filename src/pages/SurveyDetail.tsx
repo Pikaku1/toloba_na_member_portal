@@ -72,10 +72,14 @@ const SurveyDetail: React.FC = () => {
     setError(null);
 
     try {
-      const formattedAnswers = Object.entries(answers).map(([id, val]) => ({
-        question_id: id as any,
-        value: val
-      }));
+      // Only submit answers for questions that are currently loaded for this form.
+      // This prevents accidental submission of stale/foreign IDs from local state.
+      const formattedAnswers = stableQuestions
+        .map((q: any) => ({
+          question_id: q._id,
+          value: answers[q._id],
+        }))
+        .filter((a) => typeof a.value === "string" && a.value.length > 0);
 
       await submitSurvey({
         formId: stableForm._id,
