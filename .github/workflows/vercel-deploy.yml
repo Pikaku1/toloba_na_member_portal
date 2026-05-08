@@ -34,14 +34,8 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
 
-      - name: Configure git for private GitHub dependency (tolobana_convex)
-        env:
-          PAT: ${{ secrets.PRIVATE_GITHUB_READ_TOKEN }}
+      - name: Use HTTPS for GitHub git dependencies (no SSH keys on runners)
         run: |
-          test -n "$PAT" || { echo "::error::Add repository secret PRIVATE_GITHUB_READ_TOKEN — fine-grained PAT with Contents: Read on vibe4bugs/tolobana_convex. SAML orgs: authorize the token for vibe4bugs."; exit 1; }
-          printf 'https://x-access-token:%s@github.com\n' "$PAT" > ~/.git-credentials
-          chmod 600 ~/.git-credentials
-          git config --global credential.helper store
           git config --global --add url."https://github.com/".insteadOf "ssh://git@github.com/"
           git config --global --add url."https://github.com/".insteadOf "git@github.com:"
 
@@ -109,14 +103,8 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
 
-      - name: Configure git for private GitHub dependency (tolobana_convex)
-        env:
-          PAT: ${{ secrets.PRIVATE_GITHUB_READ_TOKEN }}
+      - name: Use HTTPS for GitHub git dependencies (no SSH keys on runners)
         run: |
-          test -n "$PAT" || { echo "::error::Add repository secret PRIVATE_GITHUB_READ_TOKEN — fine-grained PAT with Contents: Read on vibe4bugs/tolobana_convex. SAML orgs: authorize the token for vibe4bugs."; exit 1; }
-          printf 'https://x-access-token:%s@github.com\n' "$PAT" > ~/.git-credentials
-          chmod 600 ~/.git-credentials
-          git config --global credential.helper store
           git config --global --add url."https://github.com/".insteadOf "ssh://git@github.com/"
           git config --global --add url."https://github.com/".insteadOf "git@github.com:"
 
