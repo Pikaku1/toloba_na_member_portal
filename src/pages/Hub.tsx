@@ -1,5 +1,5 @@
 import React from "react";
-import { api } from "../../convex/_generated/api";
+import { api } from "@tolobana/convex-backend/convex/_generated/api";
 import { useNavigate } from "react-router-dom";
 import { Heart, Users } from "lucide-react";
 import PageMasthead from "../components/Layout/PageMasthead";

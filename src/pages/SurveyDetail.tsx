@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { api } from "../../convex/_generated/api";
-import type { Doc, Id } from "../../convex/_generated/dataModel";
+import { api } from "@tolobana/convex-backend/convex/_generated/api";
+import type { Doc, Id } from "@tolobana/convex-backend/convex/_generated/dataModel";
 import { useAuth } from "../context/AuthContext";
 import { ArrowLeft } from "lucide-react";
 import { useAdminMutation, useAdminReadQuery } from "../hooks/useDbQuery";

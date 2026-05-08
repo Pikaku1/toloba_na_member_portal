@@ -24,21 +24,21 @@ Stack: React (Vite), Convex (shared deployment). **No Clerk.**
    npm install
    ```
 
-2. **Convex (backend source of truth: admin repo)**
+2. **Convex (shared backend package)**
 
-   Schema and all Convex functions live in **`tolobana_admin/convex/`** only. Running **`npx convex deploy`** (or **`npx convex dev`**) from **this** repo’s root would overwrite the shared deployment and can break Clerk on the admin app or member APIs.
+   Schema and Convex functions live in **[vibe4bugs/tolobana_convex](https://github.com/vibe4bugs/tolobana_convex)** (`@tolobana/convex-backend`, installed from GitHub in this app’s `package.json`).
 
-   To change the backend: use the **admin** repo (`nvm use`, then `npx convex dev` or `npx convex deploy` there).
-
-   To refresh TypeScript bindings after admin codegen:
+   Run backend changes from a clone of that repo:
 
    ```bash
-   npm run convex:sync-types
+   git clone https://github.com/vibe4bugs/tolobana_convex.git
+   cd tolobana_convex
+   nvm use
+   npm install
+   npx convex dev
    ```
 
-   This copies `tolobana_admin/convex/_generated/` into `toloba_na_member_portal/convex/_generated/`. Run it whenever the admin team changes Convex functions or you pull backend-related changes.
-
-   See also [`convex/README.md`](convex/README.md).
+   This app imports generated bindings from `@tolobana/convex-backend/convex/_generated/api`.
 
 3. **Frontend env**
 
@@ -115,13 +115,12 @@ Logout clears `localStorage` and returns to `/login`. No password, no OTP, no to
 | `npm run dev` | Vite dev server |
 | `npm run build` | Production build |
 | `npm run preview` | Preview production build |
-| `npm run convex:sync-types` | Copy `tolobana_admin/convex/_generated/` → `convex/_generated/` (after `npx convex codegen` in admin) |
 
 ---
 
 ## Schema (member portal additions)
 
-Member-specific tables are defined in **`tolobana_admin/convex/schema.ts`** (same repo as the admin console) alongside admin tables (`members`, `hub_contributions`, and the `submissions.by_respondent_email` index). Edit schema only through the admin Convex project, then deploy from there.
+Member-specific tables are defined in **`tolobana_convex/convex/schema.ts`** in [vibe4bugs/tolobana_convex](https://github.com/vibe4bugs/tolobana_convex) alongside admin tables (`members`, `hub_contributions`, and the `submissions.by_respondent_email` index). Edit schema there, then deploy from that repo.
 
 **`members`** — ITS number, display name, optional email, `created_at`. Seeded by dev team.
 
@@ -144,7 +143,7 @@ Server rejects contributions if `collection_id` maps to an inactive collection. 
 Survey may have gone offline between page load and submit. The server enforces `is_live` — member will see an error and can refresh to confirm.
 
 **Schema / API types out of date after pull**
-If the admin console repo changed Convex functions, run **`npm run convex:sync-types`** (after they ran **`npx convex codegen`** in admin, or after you do the same in admin). Do not hand-edit `convex/_generated/*`.
+If [tolobana_convex](https://github.com/vibe4bugs/tolobana_convex) changed on `main`, run `npm install` here (or bump the GitHub ref in `package.json`) to refresh installed generated bindings.
 
 ---
 
@@ -153,7 +152,7 @@ If the admin console repo changed Convex functions, run **`npm run convex:sync-t
 - Build command: `npm run build`, output directory: `dist`.
 - Set `VITE_CONVEX_URL` to the shared Convex deployment URL.
 - No Clerk env vars.
-- For **backend** changes: deploy only from **`tolobana_admin`** (`npx convex deploy` there). Never deploy Convex from this repo against the shared production deployment.
+- For **backend** changes: deploy only from [vibe4bugs/tolobana_convex](https://github.com/vibe4bugs/tolobana_convex) (`npx convex deploy` there). Never deploy Convex from this repo against the shared production deployment.
 
 ---
 

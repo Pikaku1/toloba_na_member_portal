@@ -79,6 +79,6 @@ This app supports routing reads between two Convex deployments:
 - `VITE_CONVEX_URL_MEMBER`: member-facing deployment (default provider, writes/mutations).
 - `VITE_CONVEX_URL_ADMIN`: admin deployment (read-only content for live announcements, surveys, and hub data).
 
-Backend schema and functions are maintained in **`tolobana_admin/convex/`**; sync types with `npm run convex:sync-types` after admin codegen.
+Backend schema and functions are maintained in **[vibe4bugs/tolobana_convex](https://github.com/vibe4bugs/tolobana_convex)** (`@tolobana/convex-backend`).
 
 For backward compatibility, `VITE_CONVEX_URL` is accepted as a fallback for `VITE_CONVEX_URL_MEMBER`.
