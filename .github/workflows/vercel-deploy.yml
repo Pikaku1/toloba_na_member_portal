@@ -34,10 +34,15 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
 
-      - name: Use HTTPS for GitHub (git deps; runners have no SSH keys)
+      - name: Configure git for private GitHub dependency (tolobana_convex)
+        env:
+          PAT: ${{ secrets.PRIVATE_GITHUB_READ_TOKEN }}
         run: |
-          git config --global --add url."https://github.com/".insteadOf "ssh://git@github.com/"
-          git config --global --add url."https://github.com/".insteadOf "git@github.com:"
+          test -n "$PAT" || { echo "::error::Add repository secret PRIVATE_GITHUB_READ_TOKEN — fine-grained PAT with Contents: Read on vibe4bugs/tolobana_convex (or classic PAT with repo scope)."; exit 1; }
+          AUTH="https://x-access-token:${PAT}@github.com/"
+          git config --global --add url."${AUTH}".insteadOf "https://github.com/"
+          git config --global --add url."${AUTH}".insteadOf "ssh://git@github.com/"
+          git config --global --add url."${AUTH}".insteadOf "git@github.com:"
 
       - name: Install dependencies
         run: npm ci
@@ -101,10 +106,15 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
 
-      - name: Use HTTPS for GitHub (git deps; runners have no SSH keys)
+      - name: Configure git for private GitHub dependency (tolobana_convex)
+        env:
+          PAT: ${{ secrets.PRIVATE_GITHUB_READ_TOKEN }}
         run: |
-          git config --global --add url."https://github.com/".insteadOf "ssh://git@github.com/"
-          git config --global --add url."https://github.com/".insteadOf "git@github.com:"
+          test -n "$PAT" || { echo "::error::Add repository secret PRIVATE_GITHUB_READ_TOKEN — fine-grained PAT with Contents: Read on vibe4bugs/tolobana_convex (or classic PAT with repo scope)."; exit 1; }
+          AUTH="https://x-access-token:${PAT}@github.com/"
+          git config --global --add url."${AUTH}".insteadOf "https://github.com/"
+          git config --global --add url."${AUTH}".insteadOf "ssh://git@github.com/"
+          git config --global --add url."${AUTH}".insteadOf "git@github.com:"
 
       - name: Install dependencies
         run: npm ci
