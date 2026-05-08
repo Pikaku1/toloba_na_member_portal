@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "convex:sync-types": "rsync -a --delete ../tolobana_admin/convex/_generated/ ./convex/_generated/"
   },
   "dependencies": {
     "convex": "^1.36.1",
@@ -16,6 +17,10 @@
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "react-router-dom": "^7.14.2"
+  },
+  "optionalDependencies": {
+    "@rolldown/binding-linux-x64-gnu": "1.0.0-rc.17",
+    "lightningcss-linux-x64-gnu": "1.32.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

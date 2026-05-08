@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { api } from "../../convex/_generated/api";
+import type { Doc, Id } from "../../convex/_generated/dataModel";
 import { useAuth } from "../context/AuthContext";
 import { ArrowLeft } from "lucide-react";
 import { useAdminMutation, useAdminReadQuery } from "../hooks/useDbQuery";
@@ -74,11 +75,14 @@ const SurveyDetail: React.FC = () => {
       // Only submit answers for questions that are currently loaded for this form.
       // This prevents accidental submission of stale/foreign IDs from local state.
       const formattedAnswers = stableQuestions
-        .map((q: any) => ({
+        .map((q: Doc<"questions">) => ({
           question_id: q._id,
           value: answers[q._id],
         }))
-        .filter((a) => typeof a.value === "string" && a.value.length > 0);
+        .filter(
+          (a: { question_id: Id<"questions">; value: string | undefined }) =>
+            typeof a.value === "string" && a.value.length > 0,
+        ) as { question_id: Id<"questions">; value: string }[];
 
       await submitSurvey({
         formId: stableForm._id,
@@ -94,7 +98,9 @@ const SurveyDetail: React.FC = () => {
     }
   };
 
-  const isFormValid = stableQuestions.every(q => !q.required || answers[q._id]);
+  const isFormValid = stableQuestions.every(
+    (q: Doc<"questions">) => !q.required || answers[q._id],
+  );
 
   if (isSuccess) {
     return (
