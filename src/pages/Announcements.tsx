@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { api } from "../../convex/_generated/api";
+import { api } from "@tolobana/convex-backend/convex/_generated/api";
 import { ChevronDown, ChevronUp, Bell } from "lucide-react";
 import PageMasthead from "../components/Layout/PageMasthead";
 import { useAdminReadQuery } from "../hooks/useDbQuery";

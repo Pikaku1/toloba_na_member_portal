@@ -7,10 +7,10 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "convex:sync-types": "rsync -a --delete ../tolobana_admin/convex/_generated/ ./convex/_generated/"
+    "preview": "vite preview"
   },
   "dependencies": {
+    "@tolobana/convex-backend": "github:vibe4bugs/tolobana_convex#main",
     "convex": "^1.36.1",
     "lucide-react": "^1.11.0",
     "qrcode.react": "^4.2.0",
