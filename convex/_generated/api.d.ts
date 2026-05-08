@@ -9,8 +9,14 @@
  */
 
 import type * as announcements from "../announcements.js";
+import type * as auth from "../auth.js";
+import type * as email from "../email.js";
 import type * as hub from "../hub.js";
+import type * as hubCollections from "../hubCollections.js";
 import type * as members from "../members.js";
+import type * as publicAnnouncements from "../publicAnnouncements.js";
+import type * as publicHubCollections from "../publicHubCollections.js";
+import type * as publicSurveys from "../publicSurveys.js";
 import type * as seed from "../seed.js";
 import type * as surveys from "../surveys.js";
 
@@ -22,8 +28,14 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   announcements: typeof announcements;
+  auth: typeof auth;
+  email: typeof email;
   hub: typeof hub;
+  hubCollections: typeof hubCollections;
   members: typeof members;
+  publicAnnouncements: typeof publicAnnouncements;
+  publicHubCollections: typeof publicHubCollections;
+  publicSurveys: typeof publicSurveys;
   seed: typeof seed;
   surveys: typeof surveys;
 }>;

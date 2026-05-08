@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "convex:sync-types": "rsync -a --delete ../tolobana_admin/convex/_generated/ ./convex/_generated/"
   },
   "dependencies": {
     "convex": "^1.36.1",
