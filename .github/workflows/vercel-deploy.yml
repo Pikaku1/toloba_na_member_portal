@@ -57,6 +57,8 @@ jobs:
           : > .env.production.local
 
       - name: Build prebuilt artifacts
+        env:
+          NPM_CONFIG_INCLUDE: optional
         run: vercel build --token="${{ secrets.VERCEL_TOKEN }}"
 
       - name: Deploy prebuilt artifacts (Preview)
@@ -117,6 +119,8 @@ jobs:
           : > .env.production.local
 
       - name: Build prebuilt artifacts (Production)
+        env:
+          NPM_CONFIG_INCLUDE: optional
         run: vercel build --prod --token="${{ secrets.VERCEL_TOKEN }}"
 
       - name: Deploy prebuilt artifacts (Production)
