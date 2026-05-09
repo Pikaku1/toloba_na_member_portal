@@ -74,18 +74,13 @@ const SurveyDetail: React.FC = () => {
     try {
       // Only submit answers for questions that are currently loaded for this form.
       // This prevents accidental submission of stale/foreign IDs from local state.
-      const formattedAnswers = stableQuestions
-        .map((q: Doc<"questions">) => ({
-          question_id: q._id,
-          value:
-            Array.isArray(answers[q._id])
-              ? JSON.stringify(answers[q._id])
-              : answers[q._id],
-        }))
-        .filter(
-          (a: { question_id: Id<"questions">; value: string | undefined }) =>
-            typeof a.value === "string" && a.value.length > 0,
-        ) as { question_id: Id<"questions">; value: string }[];
+      const formattedAnswers: { question_id: Id<"questions">; value: string }[] =
+        stableQuestions.flatMap((q: Doc<"questions">) => {
+          const raw = answers[q._id];
+          const value = Array.isArray(raw) ? JSON.stringify(raw) : raw;
+          if (typeof value !== "string" || value.length === 0) return [];
+          return [{ question_id: q._id, value }];
+        });
 
       await submitSurvey({
         formId: stableForm._id,
