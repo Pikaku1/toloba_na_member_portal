@@ -39,7 +39,7 @@ const SurveyDetail: React.FC = () => {
   
   const submitSurvey = useAdminMutation(api.surveys.submit);
 
-  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [answers, setAnswers] = useState<Record<string, string | string[]>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -62,7 +62,7 @@ const SurveyDetail: React.FC = () => {
     );
   }
 
-  const handleInputChange = (questionId: string, value: string) => {
+  const handleInputChange = (questionId: string, value: string | string[]) => {
     setAnswers(prev => ({ ...prev, [questionId]: value }));
   };
 
@@ -77,7 +77,10 @@ const SurveyDetail: React.FC = () => {
       const formattedAnswers = stableQuestions
         .map((q: Doc<"questions">) => ({
           question_id: q._id,
-          value: answers[q._id],
+          value:
+            Array.isArray(answers[q._id])
+              ? JSON.stringify(answers[q._id])
+              : answers[q._id],
         }))
         .filter(
           (a: { question_id: Id<"questions">; value: string | undefined }) =>
@@ -98,9 +101,12 @@ const SurveyDetail: React.FC = () => {
     }
   };
 
-  const isFormValid = stableQuestions.every(
-    (q: Doc<"questions">) => !q.required || answers[q._id],
-  );
+  const isFormValid = stableQuestions.every((q: Doc<"questions">) => {
+    if (!q.required) return true;
+    const answer = answers[q._id];
+    if (Array.isArray(answer)) return answer.length > 0;
+    return Boolean(answer);
+  });
 
   if (isSuccess) {
     return (
@@ -169,7 +175,7 @@ const SurveyDetail: React.FC = () => {
               
               <QuestionInput 
                 question={q} 
-                value={answers[q._id] || ""} 
+                value={answers[q._id] ?? ""} 
                 onChange={(val) => handleInputChange(q._id, val)}
                 disabled={isSubmitting}
               />
@@ -307,25 +313,26 @@ const SurveyDetail: React.FC = () => {
 
 const QuestionInput: React.FC<{ 
   question: any; 
-  value: string; 
-  onChange: (val: string) => void;
+  value: string | string[];
+  onChange: (val: string | string[]) => void;
   disabled?: boolean;
 }> = ({ question, value, onChange, disabled }) => {
+  const stringValue = typeof value === "string" ? value : "";
   switch (question.type) {
     case "short_text":
-      return <input type="text" value={value} onChange={e => onChange(e.target.value)} disabled={disabled} />;
+      return <input type="text" value={stringValue} onChange={e => onChange(e.target.value)} disabled={disabled} />;
     
     case "long_text":
-      return <textarea rows={4} value={value} onChange={e => onChange(e.target.value)} disabled={disabled} style={{ height: 'auto', padding: '12px 16px' }} />;
+      return <textarea rows={4} value={stringValue} onChange={e => onChange(e.target.value)} disabled={disabled} style={{ height: 'auto', padding: '12px 16px' }} />;
     
     case "email":
-      return <input type="email" value={value} onChange={e => onChange(e.target.value)} inputMode="email" disabled={disabled} />;
+      return <input type="email" value={stringValue} onChange={e => onChange(e.target.value)} inputMode="email" disabled={disabled} />;
     
     case "number":
-      return <input type="number" value={value} onChange={e => onChange(e.target.value)} inputMode="decimal" disabled={disabled} />;
+      return <input type="number" value={stringValue} onChange={e => onChange(e.target.value)} inputMode="decimal" disabled={disabled} />;
     
     case "date":
-      return <input type="date" value={value} onChange={e => onChange(e.target.value)} disabled={disabled} />;
+      return <input type="date" value={stringValue} onChange={e => onChange(e.target.value)} disabled={disabled} />;
     
     case "single_choice":
       return (
@@ -333,7 +340,7 @@ const QuestionInput: React.FC<{
           {question.options?.map((opt: string) => (
             <div 
               key={opt} 
-              className={`choice-row ${value === opt ? "selected" : ""}`}
+              className={`choice-row ${stringValue === opt ? "selected" : ""}`}
               onClick={() => !disabled && onChange(opt)}
             >
               <div className="choice-indicator">
@@ -357,20 +364,77 @@ const QuestionInput: React.FC<{
           `}</style>
         </div>
       );
+
+    case "multiple_choice": {
+      const selected = Array.isArray(value) ? value : [];
+      const toggle = (opt: string) => {
+        if (disabled) return;
+        if (selected.includes(opt)) {
+          onChange(selected.filter((item) => item !== opt));
+          return;
+        }
+        onChange([...selected, opt]);
+      };
+      return (
+        <div className="choice-group">
+          {question.options?.map((opt: string) => (
+            <div
+              key={opt}
+              className={`choice-row ${selected.includes(opt) ? "selected" : ""}`}
+              onClick={() => toggle(opt)}
+            >
+              <div className="choice-indicator checkbox">
+                <div className="choice-inner" />
+              </div>
+              <span>{opt}</span>
+            </div>
+          ))}
+          <style>{`
+            .choice-group { display: flex; flex-direction: column; gap: 8px; }
+            .choice-row { 
+              min-height: 52px; padding: 10px 16px; border: 1px solid var(--parchment); border-left: 3px solid transparent;
+              display: flex; align-items: center; gap: 12px; cursor: pointer; background: var(--white);
+              transition: all 0.2s ease;
+            }
+            .choice-row.selected { border-left-color: var(--gold); background: var(--gold-pale); }
+            .choice-indicator.checkbox { width: 18px; height: 18px; border: 1.5px solid var(--parchment); border-radius: 4px; display: flex; align-items: center; justify-content: center; }
+            .selected .choice-indicator.checkbox { border-color: var(--gold); }
+            .choice-inner { width: 10px; height: 10px; border-radius: 2px; background: transparent; transition: background 0.2s; }
+            .selected .choice-inner { background: var(--gold); }
+          `}</style>
+        </div>
+      );
+    }
+
+    case "dropdown":
+      return (
+        <select
+          value={stringValue}
+          onChange={(e) => onChange(e.target.value)}
+          disabled={disabled}
+        >
+          <option value="">Select an option...</option>
+          {question.options?.map((opt: string) => (
+            <option key={opt} value={opt}>
+              {opt}
+            </option>
+          ))}
+        </select>
+      );
     
     case "yes_no":
       return (
         <div className="yes-no-group">
           <button 
             type="button" 
-            className={`choice-btn ${value === "Yes" ? "selected" : ""}`}
+            className={`choice-btn ${stringValue === "Yes" ? "selected" : ""}`}
             onClick={() => !disabled && onChange("Yes")}
           >
             YES
           </button>
           <button 
             type="button" 
-            className={`choice-btn ${value === "No" ? "selected" : ""}`}
+            className={`choice-btn ${stringValue === "No" ? "selected" : ""}`}
             onClick={() => !disabled && onChange("No")}
           >
             NO
