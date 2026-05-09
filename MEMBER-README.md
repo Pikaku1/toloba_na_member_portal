@@ -122,7 +122,7 @@ Logout clears `localStorage` and returns to `/login`. No password, no OTP, no to
 
 Member-specific tables are defined in **`tolobana_convex/convex/schema.ts`** in [vibe4bugs/tolobana_convex](https://github.com/vibe4bugs/tolobana_convex) alongside admin tables (`members`, `hub_contributions`, and the `submissions.by_respondent_email` index). Edit schema there, then deploy from that repo.
 
-**`members`** — ITS number, display name, optional email, `created_at`. Seeded by dev team.
+**`members`** — ITS number, display name, optional email, `created_at`. Load production rosters with the XLSX importer documented in [tolobana_convex README](https://github.com/vibe4bugs/tolobana_convex) (`import-members` script + `MEMBERS_IMPORT_SECRET` on the **member** Convex deployment matching `VITE_CONVEX_URL_MEMBER`).
 
 **`hub_contributions`** — `collection_id`, `member_id`, amount (USD), optional note, `logged_at`. Indexes: `by_collection`, `by_member`, `by_collection_and_member`.
 
