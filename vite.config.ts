@@ -10,9 +10,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'icons.svg'],
       manifest: {
-        name: 'Tolobana Member',
-        short_name: 'Tolobana',
-        description: 'Announcements, surveys, and hub for members.',
+        name: 'Toloba NA — Member',
+        short_name: 'Toloba NA',
+        description: 'Announcements, surveys, and hub for Toloba NA members.',
         theme_color: '#0A2114',
         background_color: '#FAF6EE',
         display: 'standalone',

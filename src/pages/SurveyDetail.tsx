@@ -47,7 +47,7 @@ const SurveyDetail: React.FC = () => {
   if (stableForm === undefined || stableQuestions === undefined) {
     return (
       <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div className="loading-spinner" style={{ color: 'var(--green)' }}></div>
+        <div className="loading-spinner" style={{ color: 'var(--navy)' }}></div>
       </div>
     );
   }
@@ -220,7 +220,7 @@ const SurveyDetail: React.FC = () => {
           top: 0;
           left: 0;
           right: 0;
-          background: var(--green);
+          background: var(--navy);
           z-index: 100;
         }
 

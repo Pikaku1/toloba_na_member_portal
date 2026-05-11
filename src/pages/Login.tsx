@@ -50,7 +50,7 @@ const Login: React.FC = () => {
         
         <div className="login-header">
           <div className="accent-font org-name">DAERAT TOLOBA</div>
-          <h1 className="display-font wordmark">Tolobana</h1>
+          <h1 className="display-font wordmark">Toloba NA</h1>
           
           <div className="gold-dash"></div>
           

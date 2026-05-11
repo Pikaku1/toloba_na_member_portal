@@ -13,7 +13,7 @@ const Surveys: React.FC = () => {
   if (forms === undefined) {
     return (
       <div style={{ height: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div className="loading-spinner" style={{ color: 'var(--green)' }}></div>
+        <div className="loading-spinner" style={{ color: 'var(--navy)' }}></div>
       </div>
     );
   }
@@ -24,7 +24,7 @@ const Surveys: React.FC = () => {
         title="Surveys" 
         subtitle="Have your say in the community"
         kicker="COMMUNITY VOICE"
-        variant="green"
+        variant="navy"
       />
 
       <div className="container" style={{ paddingTop: '24px' }}>

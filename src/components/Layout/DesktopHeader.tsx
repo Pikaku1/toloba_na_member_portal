@@ -10,7 +10,7 @@ const DesktopHeader: React.FC = () => {
         <div className="header-content">
           <div className="brand-section">
             <div className="accent-font org-name">DAERAT TOLOBA</div>
-            <div className="display-font wordmark">Tolobana</div>
+            <div className="display-font wordmark">Toloba NA</div>
           </div>
           
           <nav className="desktop-nav">
