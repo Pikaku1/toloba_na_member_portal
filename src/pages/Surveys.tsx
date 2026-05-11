@@ -3,7 +3,7 @@ import { api } from "@tolobana/convex-backend/convex/_generated/api";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { FileText } from "lucide-react";
-import { useAdminReadQuery, useMemberQuery } from "../hooks/useDbQuery";
+import { useAdminReadQuery } from "../hooks/useDbQuery";
 import PageMasthead from "../components/Layout/PageMasthead";
 
 const Surveys: React.FC = () => {
@@ -68,8 +68,9 @@ const Surveys: React.FC = () => {
 
 const SurveyCard: React.FC<{ form: any; memberEmail: string; index: number }> = ({ form, memberEmail, index }) => {
   const navigate = useNavigate();
-  const submission = useMemberQuery(api.surveys.getOwnSubmission, 
-    memberEmail ? { formId: form._id, email: memberEmail } : "skip"
+  const submission = useAdminReadQuery(
+    api.surveys.getOwnSubmission,
+    memberEmail ? { formId: form._id, email: memberEmail } : "skip",
   );
   
   const isSubmitted = !!submission;

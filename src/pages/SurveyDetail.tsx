@@ -89,8 +89,17 @@ const SurveyDetail: React.FC = () => {
       });
 
       setIsSuccess(true);
-    } catch (err: any) {
-      setError(err.message || "Failed to submit survey. Please try again.");
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : typeof err === "object" &&
+              err !== null &&
+              "data" in err &&
+              typeof (err as { data: unknown }).data === "string"
+            ? (err as { data: string }).data
+            : "Failed to submit survey. Please try again.";
+      setError(message);
     } finally {
       setIsSubmitting(false);
     }
