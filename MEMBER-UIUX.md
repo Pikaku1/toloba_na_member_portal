@@ -343,11 +343,17 @@ Every interactive element must have all four states defined:
 
 ## 8. Motion & animation
 
-Keep it minimal:
-- Page transitions: simple fade (150ms ease-out). No slides — can cause motion sickness on mobile.
-- Accordion reveals (payment info, announcement expand): `max-height` transition, 200ms ease.
-- Success states: single subtle scale-up (1.0 → 1.02 → 1.0) on the confirmation icon, 300ms.
-- No looping animations, no parallax, no decorative motion.
+Keep motion purposeful and restrained:
+
+- **Route changes (signed-in shell):** Main content uses a single **fade-in** (~200ms) when the path changes. No horizontal slides (mobile comfort).
+- **Login screen:** Same **fade-only** entry (~200ms) on the login card container.
+- **List content:** Optional staggered **fade + 4px vertical nudge** (~200ms per row) for cards and timeline items; delays are CSS-only (no decorative loops on large surfaces).
+- **Loading:** List-style pages use **skeleton placeholders** with a **slow, low-contrast shimmer**; shimmer is disabled when the user prefers reduced motion (static blocks instead).
+- **LIVE badge:** The gold dot may use a **subtle pulse loop** only when `prefers-reduced-motion: no-preference`; otherwise the dot stays static.
+- **Accordion / expands** (e.g. announcements, payment reveal): opacity / max-height style transitions (~200–300ms).
+- **Success states:** One-shot **scale emphasis** (~300ms) on confirmation icons (e.g. survey submitted).
+- **Buttons & nav:** Short **press** feedback (`scale(0.98)` / `0.96` on nav links) with `--transition-fast`.
+- **No parallax** or ambient full-screen motion. Respect **`prefers-reduced-motion`** for enter animations, list stagger, success icon pop, and shimmer.
 
 ---
 

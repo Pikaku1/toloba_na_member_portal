@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import { FileText } from "lucide-react";
 import { useAdminReadQuery } from "../hooks/useDbQuery";
 import PageMasthead from "../components/Layout/PageMasthead";
+import ListPageSkeleton from "../components/ListPageSkeleton";
 
 const Surveys: React.FC = () => {
   const forms = useAdminReadQuery(api.surveys.listLive);
@@ -12,14 +13,20 @@ const Surveys: React.FC = () => {
 
   if (forms === undefined) {
     return (
-      <div style={{ height: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div className="loading-spinner" style={{ color: 'var(--navy)' }}></div>
+      <div className="surveys-page">
+        <PageMasthead
+          title="Surveys"
+          subtitle="Have your say in the community"
+          kicker="COMMUNITY VOICE"
+          variant="navy"
+        />
+        <ListPageSkeleton rows={3} />
       </div>
     );
   }
 
   return (
-    <div className="surveys-page page-transition">
+    <div className="surveys-page">
       <PageMasthead 
         title="Surveys" 
         subtitle="Have your say in the community"
@@ -38,13 +45,12 @@ const Surveys: React.FC = () => {
             <p className="meta" style={{ marginTop: '4px' }}>Check back soon.</p>
           </div>
         ) : (
-          <div className="list" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {forms.map((form: any, index: number) => (
+          <div className="list list-stagger list-stagger--gap-sm">
+            {forms.map((form: any) => (
               <SurveyCard 
                 key={form._id} 
                 form={form} 
                 memberEmail={member?.email || ""} 
-                index={index}
               />
             ))}
           </div>
@@ -66,7 +72,7 @@ const Surveys: React.FC = () => {
   );
 };
 
-const SurveyCard: React.FC<{ form: any; memberEmail: string; index: number }> = ({ form, memberEmail, index }) => {
+const SurveyCard: React.FC<{ form: any; memberEmail: string }> = ({ form, memberEmail }) => {
   const navigate = useNavigate();
   const submission = useAdminReadQuery(
     api.surveys.getOwnSubmission,
@@ -77,8 +83,7 @@ const SurveyCard: React.FC<{ form: any; memberEmail: string; index: number }> = 
 
   return (
     <div 
-      className={`card survey-card ${isSubmitted ? "submitted" : ""}`}
-      style={{ animationDelay: `${index * 50}ms` }}
+      className={`card survey-card list-stagger-item ${isSubmitted ? "submitted" : ""}`}
       onClick={() => !isSubmitted && navigate(`/surveys/${form.slug}`)}
     >
       <div className="card-top-info">
@@ -147,13 +152,6 @@ const SurveyCard: React.FC<{ form: any; memberEmail: string; index: number }> = 
           border-radius: 50%;
           display: inline-block;
           margin-right: 6px;
-          animation: pulse 2s ease infinite;
-        }
-
-        @keyframes pulse {
-          0% { transform: scale(1); opacity: 1; }
-          50% { transform: scale(1.5); opacity: 0.4; }
-          100% { transform: scale(1); opacity: 1; }
         }
 
         .card-title {

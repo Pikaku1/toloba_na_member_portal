@@ -7,7 +7,7 @@ const Account: React.FC = () => {
   const { member, logout } = useAuth();
 
   return (
-    <div className="account-page page-transition">
+    <div className="account-page">
       <PageMasthead 
         title="Account" 
         subtitle="Manage your profile"

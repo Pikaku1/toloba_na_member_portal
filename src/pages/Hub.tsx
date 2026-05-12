@@ -3,6 +3,7 @@ import { api } from "@tolobana/convex-backend/convex/_generated/api";
 import { useNavigate } from "react-router-dom";
 import { Heart, Users } from "lucide-react";
 import PageMasthead from "../components/Layout/PageMasthead";
+import ListPageSkeleton from "../components/ListPageSkeleton";
 import ProgressBar from "../components/Hub/ProgressBar";
 import { useAdminReadQuery } from "../hooks/useDbQuery";
 
@@ -12,14 +13,20 @@ const Hub: React.FC = () => {
 
   if (collections === undefined) {
     return (
-      <div style={{ height: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div className="loading-spinner" style={{ color: 'var(--navy)' }}></div>
+      <div className="hub-page">
+        <PageMasthead
+          title="Hub"
+          subtitle="Active community collections"
+          kicker="COMMUNITY HUB"
+          variant="navy"
+        />
+        <ListPageSkeleton rows={3} />
       </div>
     );
   }
 
   return (
-    <div className="hub-page page-transition">
+    <div className="hub-page">
       <PageMasthead 
         title="Hub" 
         subtitle="Active community collections"
@@ -38,8 +45,8 @@ const Hub: React.FC = () => {
             <p className="meta" style={{ marginTop: '4px' }}>Check back soon.</p>
           </div>
         ) : (
-          <div className="list" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            {collections.map((col: any, index: number) => {
+          <div className="list list-stagger list-stagger--gap-md">
+            {collections.map((col: any) => {
               // Parse target amount for progress bar
               const targetMatch = col.amount_display?.match(/\$([0-9,]+)/);
               const targetValue = targetMatch ? parseInt(targetMatch[1].replace(/,/g, '')) : 0;
@@ -47,8 +54,7 @@ const Hub: React.FC = () => {
               return (
                 <div 
                   key={col._id} 
-                  className="card hub-card"
-                  style={{ animationDelay: `${index * 50}ms` }}
+                  className="card hub-card list-stagger-item"
                   onClick={() => navigate(`/hub/${col.slug}`)}
                 >
                   <div className="card-top-info">
@@ -121,13 +127,6 @@ const Hub: React.FC = () => {
           border-radius: 50%;
           display: inline-block;
           margin-right: 6px;
-          animation: pulse 2s ease infinite;
-        }
-
-        @keyframes pulse {
-          0% { transform: scale(1); opacity: 1; }
-          50% { transform: scale(1.5); opacity: 0.4; }
-          100% { transform: scale(1); opacity: 1; }
         }
 
         .kicker {

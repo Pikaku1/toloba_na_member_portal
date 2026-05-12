@@ -92,9 +92,13 @@ const DesktopHeader: React.FC = () => {
           font-size: 10px;
           font-weight: 600;
           letter-spacing: 0.12em;
-          transition: all var(--transition-fast);
+          transition:
+            color var(--transition-fast),
+            border-bottom-color var(--transition-fast),
+            transform var(--transition-fast);
           padding-bottom: 4px;
           border-bottom: 2px solid transparent;
+          display: inline-block;
         }
 
         .nav-link:hover {
@@ -104,6 +108,10 @@ const DesktopHeader: React.FC = () => {
         .nav-link.active {
           color: var(--white);
           border-bottom-color: var(--gold);
+        }
+
+        .nav-link:active {
+          transform: scale(0.96);
         }
 
         .top-rule, .bottom-rule {

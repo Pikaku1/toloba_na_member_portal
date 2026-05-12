@@ -1,11 +1,12 @@
 import React from "react";
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import BottomNav from "./BottomNav";
 import DesktopHeader from "./DesktopHeader";
 
 const ProtectedLayout: React.FC = () => {
   const { member, isLoading } = useAuth();
+  const location = useLocation();
 
   if (isLoading) {
     return (
@@ -30,7 +31,9 @@ const ProtectedLayout: React.FC = () => {
     <div className="app-layout">
       <DesktopHeader />
       <main className="main-content">
-        <Outlet />
+        <div key={location.pathname} className="route-outlet-enter">
+          <Outlet />
+        </div>
       </main>
       <BottomNav />
 

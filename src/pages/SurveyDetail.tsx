@@ -5,6 +5,7 @@ import type { Doc, Id } from "@tolobana/convex-backend/convex/_generated/dataMod
 import { useAuth } from "../context/AuthContext";
 import { ArrowLeft } from "lucide-react";
 import { useAdminMutation, useAdminReadQuery } from "../hooks/useDbQuery";
+import ListPageSkeleton from "../components/ListPageSkeleton";
 
 const SurveyDetail: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -46,8 +47,8 @@ const SurveyDetail: React.FC = () => {
 
   if (stableForm === undefined || stableQuestions === undefined) {
     return (
-      <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div className="loading-spinner" style={{ color: 'var(--navy)' }}></div>
+      <div style={{ minHeight: "100vh", background: "var(--cream)" }}>
+        <ListPageSkeleton rows={5} tall />
       </div>
     );
   }
@@ -115,10 +116,10 @@ const SurveyDetail: React.FC = () => {
   if (isSuccess) {
     return (
       <div className="success-overlay pattern-bg">
-        <div className="success-panel page-transition">
+        <div className="success-panel">
           <div className="double-rule"></div>
           <div className="success-content">
-            <div className="check-icon accent-font">✓</div>
+            <div className="check-icon accent-font icon-success-pop">✓</div>
             <div className="accent-font kicker">RESPONSE RECORDED</div>
             <h1 className="display-font success-title">Your submission has been saved.</h1>
             <p className="success-subtitle">Thank you for your contribution to the community.</p>

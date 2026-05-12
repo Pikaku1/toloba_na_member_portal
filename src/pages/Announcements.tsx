@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { api } from "@tolobana/convex-backend/convex/_generated/api";
 import { ChevronDown, ChevronUp, Bell } from "lucide-react";
 import PageMasthead from "../components/Layout/PageMasthead";
+import ListPageSkeleton from "../components/ListPageSkeleton";
 import { useAdminReadQuery } from "../hooks/useDbQuery";
 
 const Announcements: React.FC = () => {
@@ -34,8 +35,14 @@ const Announcements: React.FC = () => {
 
   if (announcements === undefined) {
     return (
-      <div style={{ height: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div className="loading-spinner" style={{ color: 'var(--navy)' }}></div>
+      <div className="announcements-page">
+        <PageMasthead
+          title="Announcements"
+          subtitle="Latest from the organization"
+          kicker="DAERAT TOLOBA"
+          variant="navy"
+        />
+        <ListPageSkeleton rows={4} />
       </div>
     );
   }
@@ -52,7 +59,7 @@ const Announcements: React.FC = () => {
   ];
 
   return (
-    <div className="announcements-page page-transition">
+    <div className="announcements-page">
       <PageMasthead
         title="Announcements"
         subtitle="Latest from the organization"
@@ -74,11 +81,11 @@ const Announcements: React.FC = () => {
           <div className="chronicle-list">
             <div className="timeline-line"></div>
 
-            {displayAnnouncements.map((ann: any, index: number) => (
+            <div className="list-stagger list-stagger--gap-md">
+            {displayAnnouncements.map((ann: any) => (
               <div
                 key={ann._id}
-                className={`timeline-item ${expandedId === ann._id ? "expanded" : ""}`}
-                style={{ animationDelay: `${index * 50}ms` }}
+                className={`timeline-item list-stagger-item ${expandedId === ann._id ? "expanded" : ""}`}
               >
                 <div className="timeline-marker">✦</div>
 
@@ -118,6 +125,7 @@ const Announcements: React.FC = () => {
                 </div>
               </div>
             ))}
+            </div>
           </div>
         )}
       </div>
@@ -131,9 +139,6 @@ const Announcements: React.FC = () => {
         .chronicle-list {
           position: relative;
           padding-left: 32px;
-          display: flex;
-          flex-direction: column;
-          gap: 24px;
         }
 
         .timeline-line {

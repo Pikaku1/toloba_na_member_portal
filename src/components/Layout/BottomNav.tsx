@@ -73,7 +73,13 @@ const BottomNav: React.FC = () => {
           text-decoration: none;
           color: rgba(255, 255, 255, 0.35);
           gap: 4px;
-          transition: all var(--transition-fast);
+          transition:
+            color var(--transition-fast),
+            transform var(--transition-fast);
+        }
+
+        .nav-item:active {
+          transform: scale(0.96);
         }
 
         .nav-item.active {

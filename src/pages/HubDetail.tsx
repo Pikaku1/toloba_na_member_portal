@@ -8,6 +8,7 @@ import { QRCodeSVG } from "qrcode.react";
 import ProgressBar from "../components/Hub/ProgressBar";
 import ContributionChart from "../components/Hub/ContributionChart";
 import { useAdminReadQuery } from "../hooks/useDbQuery";
+import ListPageSkeleton from "../components/ListPageSkeleton";
 
 const HubDetail: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -28,8 +29,8 @@ const HubDetail: React.FC = () => {
 
   if (collection === undefined) {
     return (
-      <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div className="loading-spinner" style={{ color: 'var(--green)' }}></div>
+      <div style={{ minHeight: "100vh", background: "var(--cream)" }}>
+        <ListPageSkeleton rows={3} />
       </div>
     );
   }
@@ -157,7 +158,7 @@ const HubDetail: React.FC = () => {
             I WANT TO CONTRIBUTE
           </button>
         ) : (
-          <div className="reveal-content page-transition">
+          <div className="reveal-content route-outlet-enter">
             <div className="card payment-card">
               <div className="accent-font kicker" style={{ color: 'var(--gold-dark)', marginBottom: '16px' }}>PAY VIA ZELLE</div>
               <div className="gold-rule-small"></div>
