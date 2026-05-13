@@ -26,11 +26,27 @@ export function useDbQuery<Query extends FunctionReference<"query">>(
     return client.watchQuery(query, stableArgs);
   }, [source, query, stableArgs]);
 
-  return useSyncExternalStore(
-    (onStoreChange) => (watch ? watch.onUpdate(onStoreChange) : () => undefined),
-    () => watch?.localQueryResult(),
-    () => watch?.localQueryResult(),
+  // IMPORTANT: keep `subscribe` and `getSnapshot` stable across renders.
+  // If they are inline arrows, React treats them as new each render and
+  // re-runs the subscribe effect on every commit. For a Convex watch that
+  // means a Remove+Add modification pair is sent to the server on every
+  // render; the resulting transitions wholesale replace the local query
+  // cache and briefly drop this queryToken, so `localQueryResult()` flips
+  // between the real value and `undefined`. For boolean-derived UI (e.g.
+  // `isSubmitted = !!submission` on the Surveys list) that shows up as
+  // the card oscillating between "BEGIN SURVEY" and "✓ SUBMITTED".
+  const subscribe = useCallback(
+    (onStoreChange: () => void) =>
+      watch ? watch.onUpdate(onStoreChange) : () => undefined,
+    [watch],
   );
+
+  const getSnapshot = useCallback(
+    () => watch?.localQueryResult(),
+    [watch],
+  );
+
+  return useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 }
 
 export function useAdminReadQuery<Query extends FunctionReference<"query">>(
