@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useMutation } from "convex/react";
 import { api } from "@tolobana/convex-backend/convex/_generated/api";
 import { useAuth } from "../context/AuthContext";
 import { ArrowLeft, Copy, Check, ExternalLink, AlertTriangle } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import ProgressBar from "../components/Hub/ProgressBar";
 import ContributionChart from "../components/Hub/ContributionChart";
-import { useAdminReadQuery } from "../hooks/useDbQuery";
+import { useAdminMutation, useAdminReadQuery } from "../hooks/useDbQuery";
 import ListPageSkeleton from "../components/ListPageSkeleton";
 
 const HubDetail: React.FC = () => {
@@ -17,7 +16,7 @@ const HubDetail: React.FC = () => {
 
   const collection = useAdminReadQuery(api.hub.getBySlug, slug ? { slug } : "skip");
   
-  const logContribution = useMutation(api.hub.logContribution);
+  const logContribution = useAdminMutation(api.hub.logContribution);
 
   const [showPayment, setShowPayment] = useState(false);
   const [amount, setAmount] = useState("");
