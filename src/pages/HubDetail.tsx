@@ -58,12 +58,18 @@ const HubDetail: React.FC = () => {
     setError(null);
 
     try {
-      await logContribution({
+      // Runtime Convex `hub.logContribution` expects `its_number` (admin roster lookup).
+      // `@tolobana/convex-backend` from Git may still type `memberId` until that package
+      // ships a commit with regenerated `api` after the hub mutation change — bridge types.
+      const payload = {
         collectionId: collection._id,
         its_number: member.its_number,
         amount: parseFloat(amount),
         note: note || undefined,
-      });
+      };
+      await logContribution(
+        payload as unknown as Parameters<typeof logContribution>[0],
+      );
 
       setIsSuccess(true);
       setAmount("");
