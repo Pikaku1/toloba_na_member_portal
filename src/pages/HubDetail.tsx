@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { api } from "@tolobana/convex-backend/convex/_generated/api";
+import type { FunctionReference } from "convex/server";
+import { ConvexError } from "convex/values";
 import { useAuth } from "../context/AuthContext";
 import { ArrowLeft, Copy, Check, ExternalLink, AlertTriangle } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import ProgressBar from "../components/Hub/ProgressBar";
 import ContributionChart from "../components/Hub/ContributionChart";
-import { useAdminMutation, useAdminReadQuery } from "../hooks/useDbQuery";
+import { useAdminAction, useAdminReadQuery } from "../hooks/useDbQuery";
 import ListPageSkeleton from "../components/ListPageSkeleton";
 
 const HubDetail: React.FC = () => {
@@ -16,7 +18,9 @@ const HubDetail: React.FC = () => {
 
   const collection = useAdminReadQuery(api.hub.getBySlug, slug ? { slug } : "skip");
   
-  const logContribution = useAdminMutation(api.hub.logContribution);
+  const logContribution = useAdminAction(
+    api.hub.logContribution as unknown as FunctionReference<"action">,
+  );
 
   const [showPayment, setShowPayment] = useState(false);
   const [amount, setAmount] = useState("");
@@ -54,14 +58,28 @@ const HubDetail: React.FC = () => {
     e.preventDefault();
     if (!amount || !member) return;
 
+    const its = String(member.its_number ?? "").replace(/\D/g, "");
+    if (!its) {
+      setError(
+        "Your saved session is missing an ITS number. Log out, sign in again, then try logging this contribution.",
+      );
+      return;
+    }
+
+    const parsed = parseFloat(amount);
+    if (!Number.isFinite(parsed) || parsed <= 0) {
+      setError("Enter a valid amount greater than zero.");
+      return;
+    }
+
     setIsSubmitting(true);
     setError(null);
 
     try {
       await logContribution({
         collectionId: collection._id,
-        its_number: member.its_number,
-        amount: parseFloat(amount),
+        its_number: its,
+        amount: parsed,
         note: note || undefined,
       });
 
@@ -70,15 +88,22 @@ const HubDetail: React.FC = () => {
       setNote("");
       setTimeout(() => setIsSuccess(false), 5000);
     } catch (err: unknown) {
-      const message =
-        err instanceof Error
-          ? err.message
-          : typeof err === "object" &&
-              err !== null &&
-              "data" in err &&
-              typeof (err as { data: unknown }).data === "string"
-            ? (err as { data: string }).data
-            : "Failed to log contribution. Please try again.";
+      let message = "Failed to log contribution. Please try again.";
+      if (err instanceof ConvexError) {
+        message =
+          typeof err.data === "string"
+            ? err.data
+            : err.message || JSON.stringify(err.data);
+      } else if (err instanceof Error) {
+        message = err.message;
+      } else if (
+        typeof err === "object" &&
+        err !== null &&
+        "data" in err &&
+        typeof (err as { data: unknown }).data === "string"
+      ) {
+        message = (err as { data: string }).data;
+      }
       setError(message);
     } finally {
       setIsSubmitting(false);

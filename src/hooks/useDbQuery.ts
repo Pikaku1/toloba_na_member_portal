@@ -101,3 +101,23 @@ export function useMemberMutation<Mutation extends FunctionReference<"mutation">
 ): (args: Mutation["_args"]) => Promise<Mutation["_returnType"]> {
   return useDbMutation("member", mutation);
 }
+
+export function useDbAction<Action extends FunctionReference<"action">>(
+  source: DbSource,
+  actionRef: Action,
+): (args: Action["_args"]) => Promise<Action["_returnType"]> {
+  const client = useMemo(() => getConvexClient(source), [source]);
+  const actionName = getFunctionName(actionRef);
+
+  return useCallback(
+    (args: Action["_args"]) => client.action(actionRef, args),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [client, actionName],
+  );
+}
+
+export function useAdminAction<Action extends FunctionReference<"action">>(
+  actionRef: Action,
+): (args: Action["_args"]) => Promise<Action["_returnType"]> {
+  return useDbAction("admin", actionRef);
+}
