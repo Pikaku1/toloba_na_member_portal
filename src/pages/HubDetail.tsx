@@ -60,17 +60,26 @@ const HubDetail: React.FC = () => {
     try {
       await logContribution({
         collectionId: collection._id,
-        memberId: member._id as any,
+        its_number: member.its_number,
         amount: parseFloat(amount),
-        note: note || undefined
+        note: note || undefined,
       });
 
       setIsSuccess(true);
       setAmount("");
       setNote("");
       setTimeout(() => setIsSuccess(false), 5000);
-    } catch (err: any) {
-      setError(err.message || "Failed to log contribution.");
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : typeof err === "object" &&
+              err !== null &&
+              "data" in err &&
+              typeof (err as { data: unknown }).data === "string"
+            ? (err as { data: string }).data
+            : "Failed to log contribution. Please try again.";
+      setError(message);
     } finally {
       setIsSubmitting(false);
     }
