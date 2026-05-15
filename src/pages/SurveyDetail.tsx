@@ -271,7 +271,7 @@ const SurveyDetail: React.FC = () => {
 
         .form-container {
           padding-top: 28px;
-          padding-bottom: 120px;
+          padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px));
         }
 
         .question-block {
@@ -299,7 +299,7 @@ const SurveyDetail: React.FC = () => {
           right: 0;
           background: var(--navy);
           border-top: 2px solid var(--gold);
-          padding: 16px 20px;
+          padding: 16px 20px calc(16px + env(safe-area-inset-bottom, 0px));
           z-index: 110;
         }
 
