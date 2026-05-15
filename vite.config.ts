@@ -8,7 +8,13 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['daerat-toloba-na-logo.jpg', 'icons.svg'],
+      includeAssets: [
+        'favicon-32.png',
+        'apple-touch-icon-180.png',
+        'pwa-192x192.png',
+        'pwa-512x512.png',
+        'icons.svg',
+      ],
       manifest: {
         name: 'Toloba NA — Member',
         short_name: 'Toloba NA',
@@ -21,14 +27,20 @@ export default defineConfig({
         start_url: '/',
         icons: [
           {
-            src: 'daerat-toloba-na-logo.jpg',
+            src: 'pwa-192x192.png',
             sizes: '192x192',
-            type: 'image/jpeg',
+            type: 'image/png',
           },
           {
-            src: 'daerat-toloba-na-logo.jpg',
+            src: 'pwa-512x512.png',
             sizes: '512x512',
-            type: 'image/jpeg',
+            type: 'image/png',
+          },
+          {
+            src: 'pwa-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable',
           },
         ],
       },
