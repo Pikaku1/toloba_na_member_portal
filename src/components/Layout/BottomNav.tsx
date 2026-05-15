@@ -5,11 +5,11 @@ import { Bell, ClipboardList, Heart, User } from "lucide-react";
 const BottomNav: React.FC = () => {
   const { pathname } = useLocation();
 
-  // Logic: Hide if we are on a detail page (e.g., /hub/my-collection)
-  // but keep it if we are on the main list page (/hub)
+  // Hide on full-bleed detail routes so fixed footers (submit, pay, etc.) stay usable on mobile.
   const isHubDetailPage = pathname.startsWith("/hub/") && pathname !== "/hub";
+  const isSurveyDetailPage = pathname.startsWith("/surveys/");
 
-  if (isHubDetailPage) return null;
+  if (isHubDetailPage || isSurveyDetailPage) return null;
 
   return (
     <nav className="bottom-nav">
