@@ -48,7 +48,7 @@ jobs:
         run: npm install --no-save @rolldown/binding-linux-x64-gnu
 
       - name: Install Vercel CLI
-        run: npm install --global vercel@41.7.8
+        run: npm install --global vercel@47.2.2
 
       - name: Validate required secrets
         run: |
@@ -74,6 +74,22 @@ jobs:
             echo "Vercel API project lookup HTTP status: ${code} (401/403=token/access, 404=wrong IDs)"
             exit $status
           fi
+
+      - name: Force Node.js 22 for prebuilt build
+        run: |
+          node <<'EOF'
+          const fs = require("fs");
+          const path = ".vercel/project.json";
+          const raw = fs.readFileSync(path, "utf8");
+          const data = JSON.parse(raw);
+          if (data.settings && typeof data.settings === "object") {
+            data.settings.nodeVersion = "22.x";
+          } else {
+            data.nodeVersion = "22.x";
+          }
+          fs.writeFileSync(path, JSON.stringify(data, null, 2) + "\n");
+          console.log("Set nodeVersion to 22.x in", path);
+          EOF
 
       - name: Write CI env file for build
         run: |
@@ -133,7 +149,7 @@ jobs:
         run: npm install --no-save @rolldown/binding-linux-x64-gnu
 
       - name: Install Vercel CLI
-        run: npm install --global vercel@41.7.8
+        run: npm install --global vercel@47.2.2
 
       - name: Validate required secrets
         run: |
@@ -155,6 +171,22 @@ jobs:
             echo "Vercel API project lookup HTTP status: ${code} (401/403=token/access, 404=wrong IDs)"
             exit $status
           fi
+
+      - name: Force Node.js 22 for prebuilt build
+        run: |
+          node <<'EOF'
+          const fs = require("fs");
+          const path = ".vercel/project.json";
+          const raw = fs.readFileSync(path, "utf8");
+          const data = JSON.parse(raw);
+          if (data.settings && typeof data.settings === "object") {
+            data.settings.nodeVersion = "22.x";
+          } else {
+            data.nodeVersion = "22.x";
+          }
+          fs.writeFileSync(path, JSON.stringify(data, null, 2) + "\n");
+          console.log("Set nodeVersion to 22.x in", path);
+          EOF
 
       - name: Write CI env file for build
         run: |
