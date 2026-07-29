@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tolobana/convex-backend": "github:vibe4bugs/tolobana_convex#e6d0b2c146e08ccb718607fd9309bfb66b02eb5d",
+    "@tolobana/convex-backend": "git+https://github.com/vibe4bugs/tolobana_convex.git#e6d0b2c146e08ccb718607fd9309bfb66b02eb5d",
     "convex": "^1.36.1",
     "lucide-react": "^1.11.0",
     "qrcode.react": "^4.2.0",
