@@ -16,7 +16,12 @@ const HubDetail: React.FC = () => {
   const navigate = useNavigate();
   const { member } = useAuth();
 
-  const collection = useAdminReadQuery(api.hub.getBySlug, slug ? { slug } : "skip");
+  const collection = useAdminReadQuery(
+    api.hub.getBySlug,
+    slug
+      ? { slug, designation: member?.designation }
+      : "skip",
+  );
   
   const logContribution = useAdminAction(
     api.hub.logContribution as unknown as FunctionReference<"action">,

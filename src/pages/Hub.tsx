@@ -6,9 +6,14 @@ import PageMasthead from "../components/Layout/PageMasthead";
 import ListPageSkeleton from "../components/ListPageSkeleton";
 import ProgressBar from "../components/Hub/ProgressBar";
 import { useAdminReadQuery } from "../hooks/useDbQuery";
+import { useAuth } from "../context/AuthContext";
 
 const Hub: React.FC = () => {
-  const collections = useAdminReadQuery(api.hub.listLive);
+  const { member } = useAuth();
+  const collections = useAdminReadQuery(
+    api.hub.listLive,
+    member ? { designation: member.designation } : "skip",
+  );
   const navigate = useNavigate();
 
   if (collections === undefined) {

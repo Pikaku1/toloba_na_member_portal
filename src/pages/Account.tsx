@@ -34,29 +34,15 @@ const Account: React.FC = () => {
             <span className="accent-font kicker">ITS NUMBER</span>
             <div className="its-display">{member?.its_number}</div>
 
-            {/* Identity Badges Section */}
-            <div className="badge-vault">
-              <div className="engraved-badge" title="Verified Member">
-                <div className="badge-inner">
-                  <span className="accent-font">ITS</span>
+            {member?.designation && (
+              <>
+                <div className="ornament-rule" style={{ margin: '24px auto' }}>
+                  <span style={{ fontSize: '12px' }}>✦</span>
                 </div>
-                <span className="badge-label">VERIFIED</span>
-              </div>
-              
-              <div className="engraved-badge" title="Early Supporter">
-                <div className="badge-inner">
-                  <span className="accent-font">P</span>
-                </div>
-                <span className="badge-label">PIONEER</span>
-              </div>
-
-              <div className="engraved-badge locked" title="Make a contribution to unlock">
-                <div className="badge-inner">
-                  <span className="accent-font">C</span>
-                </div>
-                <span className="badge-label">PATRON</span>
-              </div>
-            </div>
+                <span className="accent-font kicker">DESIGNATION</span>
+                <div className="its-display designation-display">{member.designation}</div>
+              </>
+            )}
           </div>
 
           <div className="double-rule"></div>
@@ -106,10 +92,12 @@ const Account: React.FC = () => {
         }
 
         .signature-font {
-          font-family: 'Great Vibes', cursive;
-          font-size: 42px;
+          font-family: var(--font-signature);
+          font-size: 32px;
+          font-weight: 600;
           color: var(--white);
-          line-height: 1;
+          line-height: 1.15;
+          letter-spacing: -0.01em;
           text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
@@ -129,54 +117,6 @@ const Account: React.FC = () => {
           font-weight: 600;
           letter-spacing: 0.08em;
           margin-top: 4px;
-          margin-bottom: 32px;
-        }
-
-        .badge-vault {
-          display: flex;
-          justify-content: center;
-          gap: 24px;
-          margin-top: 16px;
-        }
-
-        .engraved-badge {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 8px;
-        }
-
-        .badge-inner {
-          width: 44px;
-          height: 44px;
-          border-radius: 50%;
-          border: 1.5px solid var(--gold);
-          background: radial-gradient(circle at center, var(--gold-dark), var(--navy));
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          box-shadow: inset 0 2px 4px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3);
-          position: relative;
-        }
-
-        .badge-inner .accent-font {
-          font-size: 10px;
-          color: var(--gold);
-          text-shadow: 0 1px 2px rgba(0,0,0,0.5);
-        }
-
-        .badge-label {
-          font-family: var(--font-accent);
-          font-size: 7px;
-          font-weight: 600;
-          letter-spacing: 0.12em;
-          color: var(--gold-pale);
-          opacity: 0.8;
-        }
-
-        .locked {
-          opacity: 0.3;
-          filter: grayscale(1);
         }
 
         .ornament-rule {
