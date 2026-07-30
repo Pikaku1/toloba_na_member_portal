@@ -2,6 +2,9 @@
   "name": "temp-app",
   "private": true,
   "version": "0.0.0",
+  "engines": {
+    "node": "22.x"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,7 +13,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tolobana/convex-backend": "git+https://github.com/vibe4bugs/tolobana_convex.git#main",
+    "@tolobana/convex-backend": "git+https://github.com/vibe4bugs/tolobana_convex.git#e6d0b2c146e08ccb718607fd9309bfb66b02eb5d",
     "convex": "^1.36.1",
     "lucide-react": "^1.11.0",
     "qrcode.react": "^4.2.0",

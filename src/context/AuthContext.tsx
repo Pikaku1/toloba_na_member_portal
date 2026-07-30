@@ -1,10 +1,13 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 
-interface Member {
+export interface Member {
   _id: string;
   name: string;
   its_number: string;
   email?: string;
+  designation?: string;
+  /** True when designation is leadership (for leadership-only campaigns). */
+  can_access_hub?: boolean;
 }
 
 interface AuthContextType {

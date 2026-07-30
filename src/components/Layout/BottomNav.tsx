@@ -1,9 +1,18 @@
 import React from "react";
-import { NavLink, useLocation } from "react-router-dom"; // Added useLocation
+import { NavLink, useLocation } from "react-router-dom";
 import { Bell, ClipboardList, Heart, User } from "lucide-react";
+import { api } from "@tolobana/convex-backend/convex/_generated/api";
+import { useAuth } from "../../context/AuthContext";
+import { useAdminReadQuery } from "../../hooks/useDbQuery";
 
 const BottomNav: React.FC = () => {
   const { pathname } = useLocation();
+  const { member } = useAuth();
+  const collections = useAdminReadQuery(
+    api.hub.listLive,
+    member ? { designation: member.designation } : "skip",
+  );
+  const showHub = (collections?.length ?? 0) > 0;
 
   // Hide on full-bleed detail routes so fixed footers (submit, pay, etc.) stay usable on mobile.
   const isHubDetailPage = pathname.startsWith("/hub/") && pathname !== "/hub";
@@ -27,13 +36,15 @@ const BottomNav: React.FC = () => {
         <ClipboardList size={22} />
         <span className="accent-font">Surveys</span>
       </NavLink>
-      <NavLink
-        to="/hub"
-        className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}
-      >
-        <Heart size={22} />
-        <span className="accent-font">Hub</span>
-      </NavLink>
+      {showHub && (
+        <NavLink
+          to="/hub"
+          className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}
+        >
+          <Heart size={22} />
+          <span className="accent-font">Hub</span>
+        </NavLink>
+      )}
       <NavLink
         to="/account"
         className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}

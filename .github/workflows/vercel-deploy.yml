@@ -48,7 +48,7 @@ jobs:
         run: npm install --no-save @rolldown/binding-linux-x64-gnu
 
       - name: Install Vercel CLI
-        run: npm install --global vercel@latest
+        run: npm install --global vercel@48.12.1
 
       - name: Validate required secrets
         run: |
@@ -57,7 +57,39 @@ jobs:
           test -n "${{ secrets.VERCEL_PROJECT_ID }}"
 
       - name: Pull Vercel project settings (Preview)
-        run: vercel pull --yes --environment=preview --token="${{ secrets.VERCEL_TOKEN }}"
+        run: |
+          set +e
+          out="$(vercel pull --yes --environment=preview --token="${{ secrets.VERCEL_TOKEN }}" 2>&1)"
+          status=$?
+          echo "$out"
+          if [ $status -ne 0 ]; then
+            echo "::error::vercel pull failed. This message usually means VERCEL_TOKEN is expired/invalid or ORG/PROJECT IDs don't match that token (not a missing .vercel folder)."
+            echo "Recreate a token at https://vercel.com/account/tokens (scope: full account or the toloba-na team),"
+            echo "then update GitHub secrets VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID."
+            echo "ORG/PROJECT IDs: Vercel project → Settings → General."
+            # Show HTTP status without leaking the token
+            code="$(curl -s -o /dev/null -w '%{http_code}' \
+              -H "Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}" \
+              "https://api.vercel.com/v9/projects/${{ secrets.VERCEL_PROJECT_ID }}?teamId=${{ secrets.VERCEL_ORG_ID }}")"
+            echo "Vercel API project lookup HTTP status: ${code} (401/403=token/access, 404=wrong IDs)"
+            exit $status
+          fi
+
+      - name: Force Node.js 22 for prebuilt build
+        run: |
+          node <<'EOF'
+          const fs = require("fs");
+          const path = ".vercel/project.json";
+          const raw = fs.readFileSync(path, "utf8");
+          const data = JSON.parse(raw);
+          if (data.settings && typeof data.settings === "object") {
+            data.settings.nodeVersion = "22.x";
+          } else {
+            data.nodeVersion = "22.x";
+          }
+          fs.writeFileSync(path, JSON.stringify(data, null, 2) + "\n");
+          console.log("Set nodeVersion to 22.x in", path);
+          EOF
 
       - name: Write CI env file for build
         run: |
@@ -117,7 +149,7 @@ jobs:
         run: npm install --no-save @rolldown/binding-linux-x64-gnu
 
       - name: Install Vercel CLI
-        run: npm install --global vercel@latest
+        run: npm install --global vercel@48.12.1
 
       - name: Validate required secrets
         run: |
@@ -126,7 +158,35 @@ jobs:
           test -n "${{ secrets.VERCEL_PROJECT_ID }}"
 
       - name: Pull Vercel project settings (Production)
-        run: vercel pull --yes --environment=production --token="${{ secrets.VERCEL_TOKEN }}"
+        run: |
+          set +e
+          out="$(vercel pull --yes --environment=production --token="${{ secrets.VERCEL_TOKEN }}" 2>&1)"
+          status=$?
+          echo "$out"
+          if [ $status -ne 0 ]; then
+            echo "::error::vercel pull failed. This message usually means VERCEL_TOKEN is expired/invalid or ORG/PROJECT IDs don't match that token (not a missing .vercel folder)."
+            code="$(curl -s -o /dev/null -w '%{http_code}' \
+              -H "Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}" \
+              "https://api.vercel.com/v9/projects/${{ secrets.VERCEL_PROJECT_ID }}?teamId=${{ secrets.VERCEL_ORG_ID }}")"
+            echo "Vercel API project lookup HTTP status: ${code} (401/403=token/access, 404=wrong IDs)"
+            exit $status
+          fi
+
+      - name: Force Node.js 22 for prebuilt build
+        run: |
+          node <<'EOF'
+          const fs = require("fs");
+          const path = ".vercel/project.json";
+          const raw = fs.readFileSync(path, "utf8");
+          const data = JSON.parse(raw);
+          if (data.settings && typeof data.settings === "object") {
+            data.settings.nodeVersion = "22.x";
+          } else {
+            data.nodeVersion = "22.x";
+          }
+          fs.writeFileSync(path, JSON.stringify(data, null, 2) + "\n");
+          console.log("Set nodeVersion to 22.x in", path);
+          EOF
 
       - name: Write CI env file for build
         run: |

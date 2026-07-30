@@ -1,7 +1,17 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
+import { api } from "@tolobana/convex-backend/convex/_generated/api";
+import { useAuth } from "../../context/AuthContext";
+import { useAdminReadQuery } from "../../hooks/useDbQuery";
 
 const DesktopHeader: React.FC = () => {
+  const { member } = useAuth();
+  const collections = useAdminReadQuery(
+    api.hub.listLive,
+    member ? { designation: member.designation } : "skip",
+  );
+  const showHub = (collections?.length ?? 0) > 0;
+
   return (
     <header className="desktop-header pattern-bg">
       <div className="header-container">
@@ -20,9 +30,11 @@ const DesktopHeader: React.FC = () => {
             <NavLink to="/surveys" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
               SURVEYS
             </NavLink>
-            <NavLink to="/hub" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-              HUB
-            </NavLink>
+            {showHub && (
+              <NavLink to="/hub" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                HUB
+              </NavLink>
+            )}
             <NavLink to="/account" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
               ME
             </NavLink>
