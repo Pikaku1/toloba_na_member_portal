@@ -48,7 +48,7 @@ jobs:
         run: npm install --no-save @rolldown/binding-linux-x64-gnu
 
       - name: Install Vercel CLI
-        run: npm install --global vercel@47.2.2
+        run: npm install --global vercel@48.12.1
 
       - name: Validate required secrets
         run: |
@@ -149,7 +149,7 @@ jobs:
         run: npm install --no-save @rolldown/binding-linux-x64-gnu
 
       - name: Install Vercel CLI
-        run: npm install --global vercel@47.2.2
+        run: npm install --global vercel@48.12.1
 
       - name: Validate required secrets
         run: |
