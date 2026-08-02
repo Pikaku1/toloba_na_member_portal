@@ -2,6 +2,7 @@ import React from "react";
 import { useAuth } from "../context/AuthContext";
 import { LogOut } from "lucide-react";
 import PageMasthead from "../components/Layout/PageMasthead";
+import PocNiyyatSection from "../components/Account/PocNiyyatSection";
 
 const Account: React.FC = () => {
   const { member, logout } = useAuth();
@@ -43,10 +44,22 @@ const Account: React.FC = () => {
                 <div className="its-display designation-display">{member.designation}</div>
               </>
             )}
+
+            {member?.jamaat && (
+              <>
+                <div className="ornament-rule" style={{ margin: '24px auto' }}>
+                  <span style={{ fontSize: '12px' }}>✦</span>
+                </div>
+                <span className="accent-font kicker">JAMAAT</span>
+                <div className="its-display designation-display">{member.jamaat}</div>
+              </>
+            )}
           </div>
 
           <div className="double-rule"></div>
         </div>
+
+        <PocNiyyatSection />
 
         <div className="actions" style={{ marginTop: '40px' }}>
           <button className="btn btn-ghost" onClick={logout}>

@@ -271,6 +271,10 @@ const HubDetail: React.FC = () => {
               {isSuccess && (
                 <div className="success-inline">
                   <span className="accent-font">✓ LOGGED — THANK YOU.</span>
+                  <p className="success-note">
+                    Your niyyat is logged for admin review. You will receive a receipt after
+                    payment is confirmed.
+                  </p>
                 </div>
               )}
 
