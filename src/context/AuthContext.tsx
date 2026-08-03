@@ -6,8 +6,12 @@ export interface Member {
   its_number: string;
   email?: string;
   designation?: string;
+  jamaat?: string;
+  coordinator?: string;
   /** True when designation is leadership (for leadership-only campaigns). */
   can_access_hub?: boolean;
+  /** True for Designation=Coordinator — sees POC jamaat niyyat section. */
+  is_poc?: boolean;
 }
 
 interface AuthContextType {
