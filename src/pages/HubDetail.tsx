@@ -4,12 +4,13 @@ import { api } from "@tolobana/convex-backend/convex/_generated/api";
 import type { FunctionReference } from "convex/server";
 import { ConvexError } from "convex/values";
 import { useAuth } from "../context/AuthContext";
-import { ArrowLeft, Copy, Check, ExternalLink, AlertTriangle, Plus, Trash2 } from "lucide-react";
-import { QRCodeSVG } from "qrcode.react";
+import { ArrowLeft, Plus, Trash2 } from "lucide-react";
 import ProgressBar from "../components/Hub/ProgressBar";
 import ContributionChart from "../components/Hub/ContributionChart";
+import ZellePayFlow from "../components/Hub/ZellePayFlow";
 import { useAdminAction, useAdminReadQuery } from "../hooks/useDbQuery";
 import ListPageSkeleton from "../components/ListPageSkeleton";
+import type { Id } from "@tolobana/convex-backend/convex/_generated/dataModel";
 
 type RosterMember = {
   its_number: string;
@@ -64,9 +65,10 @@ const HubDetail: React.FC = () => {
   const [amount, setAmount] = useState("");
   const [note, setNote] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
+  const [activePaymentId, setActivePaymentId] = useState<Id<"hub_contributions"> | null>(
+    null,
+  );
 
   /** ITS → amount string for jamaat roster rows (leadership campaigns). */
   const [rosterAmounts, setRosterAmounts] = useState<Record<string, string>>({});
@@ -159,12 +161,6 @@ const HubDetail: React.FC = () => {
     );
   }
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(collection.desired_memo);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
   const handleSubmitPersonal = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!amount || !member) return;
@@ -172,7 +168,7 @@ const HubDetail: React.FC = () => {
     const its = String(member.its_number ?? "").replace(/\D/g, "");
     if (!its) {
       setError(
-        "Your saved session is missing an ITS number. Log out, sign in again, then try logging this contribution.",
+        "Your saved session is missing an ITS number. Log out, sign in again, then try again.",
       );
       return;
     }
@@ -187,19 +183,18 @@ const HubDetail: React.FC = () => {
     setError(null);
 
     try {
-      await logContribution({
+      const id = (await logContribution({
         collectionId: collection._id,
         its_number: its,
         amount: parsed,
         note: note || undefined,
-      });
+      })) as Id<"hub_contributions">;
 
-      setIsSuccess(true);
+      setActivePaymentId(id);
       setAmount("");
       setNote("");
-      setTimeout(() => setIsSuccess(false), 5000);
     } catch (err: unknown) {
-      setError(convexErrorMessage(err, "Failed to log contribution. Please try again."));
+      setError(convexErrorMessage(err, "Failed to create payment request. Please try again."));
     } finally {
       setIsSubmitting(false);
     }
@@ -274,15 +269,15 @@ const HubDetail: React.FC = () => {
     setError(null);
 
     try {
-      await logChapterPledges({
+      const result = (await logChapterPledges({
         collectionId: collection._id,
         logger_its: loggerIts,
         pledged_amount: pledged,
         entries,
         note: note || undefined,
-      });
+      })) as { count: number; id: Id<"hub_contributions"> };
 
-      setIsSuccess(true);
+      setActivePaymentId(result.id);
       setAmount("");
       setRosterAmounts((prev) => {
         const cleared: Record<string, string> = {};
@@ -291,12 +286,17 @@ const HubDetail: React.FC = () => {
       });
       setExtraRows([]);
       setNote("");
-      setTimeout(() => setIsSuccess(false), 5000);
     } catch (err: unknown) {
-      setError(convexErrorMessage(err, "Failed to log pledges. Please try again."));
+      setError(convexErrorMessage(err, "Failed to create payment request. Please try again."));
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const resetPaymentFlow = () => {
+    setActivePaymentId(null);
+    setShowPayment(false);
+    setError(null);
   };
 
   // Mock trend data for demonstration
@@ -332,7 +332,7 @@ const HubDetail: React.FC = () => {
             <div className="hero-stats">
               <div className="stat-box">
                 <div className="display-font hero-stat-value">${collection.totalRaised.toLocaleString()}</div>
-                <div className="accent-font hero-stat-label">RAISED</div>
+                <div className="accent-font hero-stat-label">VERIFIED</div>
               </div>
               <div className="stat-box">
                 <div className="display-font hero-stat-value">{collection.contributorCount}</div>
@@ -375,59 +375,30 @@ const HubDetail: React.FC = () => {
         </section>
 
         {/* Action Reveal */}
-        {!showPayment ? (
+        {activePaymentId && member ? (
+          <div className="reveal-content route-outlet-enter" style={{ marginTop: 32 }}>
+            <ZellePayFlow
+              paymentId={activePaymentId}
+              itsNumber={String(member.its_number ?? "").replace(/\D/g, "")}
+              onStartOver={resetPaymentFlow}
+            />
+          </div>
+        ) : !showPayment ? (
           <button className="btn btn-gold" onClick={() => setShowPayment(true)} style={{ marginTop: '32px' }}>
-            {isLeadershipCampaign ? "LOG CHAPTER PLEDGES" : "I WANT TO CONTRIBUTE"}
+            {isLeadershipCampaign ? "PAY CHAPTER PLEDGE VIA ZELLE" : "PAY WITH ZELLE"}
           </button>
         ) : (
           <div className="reveal-content route-outlet-enter">
-            <div className="card payment-card">
-              <div className="accent-font kicker" style={{ color: 'var(--gold-dark)', marginBottom: '16px' }}>PAY VIA ZELLE</div>
-              <div className="gold-rule-small"></div>
-
-              {/* QR Code Section */}
-              <div className="qr-spread">
-                <div className="qr-frame">
-                  <QRCodeSVG 
-                    value={collection.payment_url} 
-                    size={140}
-                    fgColor="#001529" 
-                    level="H"
-                  />
-                </div>
-                <div className="qr-actions">
-                  <p className="meta" style={{ fontSize: '12px', marginBottom: '12px' }}>Scan the code or use the link below to open Zelle.</p>
-                  <button className="btn-gold-ghost" onClick={() => window.open(collection.payment_url, '_blank')}>
-                    <span style={{ fontSize: '14px' }}>OPEN ZELLE</span> 
-                    <ExternalLink size={16} />
-                  </button>
-                </div>
-              </div>
-
-              <div className="gold-rule-small" style={{ margin: '24px 0' }}></div>
-
-              <div className="field-label" style={{ color: 'var(--gold-dark)', fontSize: '10px' }}>REQUIRED MEMO</div>
-              <div className="memo-container" onClick={handleCopy}>
-                <div className="memo-left">
-                  <code className="memo-text">{collection.desired_memo}</code>
-                  <p className="memo-note">Copy and paste this into Zelle</p>
-                </div>
-                <div className="memo-right">
-                  {copied ? <Check size={18} style={{ color: 'var(--green)' }} /> : <Copy size={18} style={{ color: 'var(--gold-dark)' }} />}
-                </div>
-              </div>
-
-              <div className="warning-panel">
-                <AlertTriangle size={20} className="warning-icon" />
-                <p>Ensure the memo matches exactly for automated tracking.</p>
-              </div>
-            </div>
+            <p className="meta" style={{ margin: "24px 0 8px", fontSize: 13, textAlign: "center" }}>
+              Enter the amount you will send, then we&apos;ll show Zelle instructions and a unique
+              reference code. Payment is only verified after staff matches your bank deposit.
+            </p>
 
             {isLeadershipCampaign ? (
               <form onSubmit={handleSubmitChapterPledges} className="log-form">
                 <p className="pledge-lead">
                   Enter the chapter payment total, then break it down by member.
-                  Breakdown must equal the pledged amount. You are logging as{" "}
+                  Breakdown must equal the pledged amount. You are paying as{" "}
                   <strong>{member?.name ?? "secretary"}</strong>
                   {roster?.jamaat ? ` for ${roster.jamaat}` : ""}.
                 </p>
@@ -446,7 +417,7 @@ const HubDetail: React.FC = () => {
                     disabled={isSubmitting}
                   />
                   <p className="meta" style={{ marginTop: 6, fontSize: 11 }}>
-                    The amount you are sending via Zelle for this chapter.
+                    The amount you will send via Zelle for this chapter.
                   </p>
                 </div>
 
@@ -605,14 +576,6 @@ const HubDetail: React.FC = () => {
                     ⚠ {error}
                   </p>
                 )}
-                {isSuccess && (
-                  <div className="success-inline">
-                    <span className="accent-font">✓ CHAPTER PLEDGE LOGGED — THANK YOU.</span>
-                    <p className="success-note">
-                      One payment record was stored with the member breakdown for admin review.
-                    </p>
-                  </div>
-                )}
 
                 <div className="ornament-rule" style={{ margin: "32px 0" }}>
                   <span style={{ fontSize: "14px" }}>✦</span>
@@ -626,7 +589,7 @@ const HubDetail: React.FC = () => {
                   {isSubmitting ? (
                     <div className="loading-spinner"></div>
                   ) : (
-                    "LOG CHAPTER PLEDGE"
+                    "CONTINUE TO ZELLE"
                   )}
                 </button>
               </form>
@@ -664,15 +627,6 @@ const HubDetail: React.FC = () => {
                     ⚠ {error}
                   </p>
                 )}
-                {isSuccess && (
-                  <div className="success-inline">
-                    <span className="accent-font">✓ LOGGED — THANK YOU.</span>
-                    <p className="success-note">
-                      Your niyyat is logged for admin review. You will receive a receipt
-                      after payment is confirmed.
-                    </p>
-                  </div>
-                )}
 
                 <div className="ornament-rule" style={{ margin: "32px 0" }}>
                   <span style={{ fontSize: "14px" }}>✦</span>
@@ -686,7 +640,7 @@ const HubDetail: React.FC = () => {
                   {isSubmitting ? (
                     <div className="loading-spinner"></div>
                   ) : (
-                    "LOG MY CONTRIBUTION"
+                    "CONTINUE TO ZELLE"
                   )}
                 </button>
               </form>
