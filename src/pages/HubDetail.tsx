@@ -361,15 +361,20 @@ const HubDetail: React.FC = () => {
             <span style={{ fontSize: '10px' }}>✦</span>
           </div>
 
-          <div className="contributor-scroll">
-            {collection.contributorNames.length === 0 ? (
+          <div className="contributor-count-block">
+            {collection.contributorCount === 0 ? (
               <p className="display-font empty-contrib">Be the first to contribute.</p>
             ) : (
-              <div className="contributor-chips">
-                {collection.contributorNames.map((name: string, i: number) => (
-                  <span key={i} className="accent-font contributor-chip">{name}</span>
-                ))}
-              </div>
+              <>
+                <div className="display-font contributor-count-value">
+                  {collection.contributorCount}
+                </div>
+                <p className="accent-font contributor-count-label">
+                  {collection.contributorCount === 1
+                    ? "MEMBER HAS CONTRIBUTED"
+                    : "MEMBERS HAVE CONTRIBUTED"}
+                </p>
+              </>
             )}
           </div>
         </section>
@@ -809,23 +814,25 @@ const HubDetail: React.FC = () => {
           background: linear-gradient(to left, transparent, var(--gold-dark));
         }
 
-        .contributor-chips {
+        .contributor-count-block {
           display: flex;
-          flex-wrap: wrap;
-          justify-content: center;
-          gap: 8px;
+          flex-direction: column;
+          align-items: center;
+          gap: 6px;
         }
 
-        .contributor-chip {
-          background: var(--cream-deep);
-          border: 1px solid var(--gold);
-          border-radius: var(--radius-sm);
+        .contributor-count-value {
+          font-size: 42px;
+          line-height: 1;
           color: var(--navy);
-          font-size: 12px;
-          font-weight: 500;
-          padding: 6px 14px;
-          letter-spacing: 0.06em;
-          text-transform: uppercase;
+        }
+
+        .contributor-count-label {
+          color: var(--gold-dark);
+          font-size: 10px;
+          font-weight: 600;
+          letter-spacing: 0.12em;
+          margin: 0;
         }
 
         .empty-contrib {
