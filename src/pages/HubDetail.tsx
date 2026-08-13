@@ -19,7 +19,7 @@ type RosterMember = {
   email?: string;
 };
 
-type ExtraPledgeRow = { key: string; its: string; amount: string };
+type ExtraPledgeRow = { key: string; its: string; name: string; amount: string };
 
 function convexErrorMessage(err: unknown, fallback: string): string {
   if (err instanceof ConvexError) {
@@ -27,7 +27,6 @@ function convexErrorMessage(err: unknown, fallback: string): string {
       ? err.data
       : err.message || JSON.stringify(err.data);
   }
-  if (err instanceof Error) return err.message;
   if (
     typeof err === "object" &&
     err !== null &&
@@ -35,6 +34,18 @@ function convexErrorMessage(err: unknown, fallback: string): string {
     typeof (err as { data: unknown }).data === "string"
   ) {
     return (err as { data: string }).data;
+  }
+  if (err instanceof Error) {
+    const uncaught = err.message.match(/Uncaught (?:Convex)?Error:\s*(.+)/);
+    if (uncaught?.[1]) return uncaught[1].split("\n")[0]!.trim();
+    const cleaned = err.message
+      .replace(/^\[CONVEX[^\]]*\]\s*/g, "")
+      .replace(/\[Request ID:[^\]]*\]\s*/g, "")
+      .replace(/\bServer Error\b/gi, "")
+      .replace(/\bCalled by client\b/gi, "")
+      .trim();
+    if (cleaned) return cleaned;
+    return err.message;
   }
   return fallback;
 }
@@ -218,7 +229,7 @@ const HubDetail: React.FC = () => {
       return;
     }
 
-    const entries: { its_number: string; amount: number }[] = [];
+    const entries: { its_number: string; amount: number; name?: string }[] = [];
     const seen = new Set<string>();
 
     for (const [its, raw] of Object.entries(rosterAmounts)) {
@@ -232,8 +243,13 @@ const HubDetail: React.FC = () => {
     for (const row of extraRows) {
       const its = row.its.replace(/\D/g, "");
       const parsed = parseFloat(row.amount);
+      const name = row.name.trim();
       if (!its) {
         setError("Each extra row needs an ITS number.");
+        return;
+      }
+      if (!name) {
+        setError("Each extra row needs a member name (required when adding by ITS).");
         return;
       }
       if (!Number.isFinite(parsed) || parsed <= 0) {
@@ -245,7 +261,7 @@ const HubDetail: React.FC = () => {
         return;
       }
       seen.add(its);
-      entries.push({ its_number: its, amount: parsed });
+      entries.push({ its_number: its, amount: parsed, name });
     }
 
     if (entries.length === 0) {
@@ -493,6 +509,21 @@ const HubDetail: React.FC = () => {
                       disabled={isSubmitting}
                     />
                     <input
+                      type="text"
+                      placeholder="Name"
+                      value={row.name}
+                      onChange={(e) =>
+                        setExtraRows((prev) =>
+                          prev.map((r) =>
+                            r.key === row.key
+                              ? { ...r, name: e.target.value }
+                              : r,
+                          ),
+                        )
+                      }
+                      disabled={isSubmitting}
+                    />
+                    <input
                       type="number"
                       inputMode="decimal"
                       step="0.01"
@@ -533,6 +564,7 @@ const HubDetail: React.FC = () => {
                       {
                         key: `${Date.now()}-${prev.length}`,
                         its: "",
+                        name: "",
                         amount: "",
                       },
                     ])
