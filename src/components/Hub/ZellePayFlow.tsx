@@ -156,12 +156,9 @@ const ZellePayFlow: React.FC<Props> = ({ paymentId, itsNumber, onStartOver }) =>
   if (payment.status === "pending_verification" || stage === "done") {
     return (
       <div className="card payment-card">
-        <div className="accent-font kicker" style={{ color: "var(--gold-dark)", marginBottom: 16 }}>
-          PENDING VERIFICATION
-        </div>
-        <div className="gold-rule-small"></div>
-        <div className="success-inline" style={{ marginTop: 16 }}>
-          <span className="accent-font">THANKS — WE&apos;LL CONFIRM YOUR PAYMENT</span>
+        <h2 className="payment-title">Pending verification</h2>
+        <div className="success-inline" style={{ marginTop: 12 }}>
+          <p className="payment-lead">We'll confirm your payment</p>
           <p className="success-note">
             We&apos;ll confirm your payment against our bank records within{" "}
             <strong>{slaDays || payment.verification_sla_business_days}</strong> business
@@ -188,9 +185,7 @@ const ZellePayFlow: React.FC<Props> = ({ paymentId, itsNumber, onStartOver }) =>
   if (payment.status === "rejected") {
     return (
       <div className="card payment-card">
-        <div className="accent-font kicker" style={{ color: "var(--gold-dark)" }}>
-          PAYMENT NOT VERIFIED
-        </div>
+        <h2 className="payment-title">Payment not verified</h2>
         <p className="meta" style={{ marginTop: 12 }}>
           {payment.rejection_reason ||
             "Staff could not match this claim to a bank deposit."}
@@ -217,7 +212,7 @@ const ZellePayFlow: React.FC<Props> = ({ paymentId, itsNumber, onStartOver }) =>
     return (
       <div className="card payment-card">
         <div className="success-inline">
-          <span className="accent-font">PAYMENT VERIFIED — THANK YOU</span>
+        <h2 className="payment-title">Payment verified</h2>
         </div>
         <button type="button" className="btn btn-navy" style={{ marginTop: 20 }} onClick={onStartOver}>
           Done
@@ -229,10 +224,7 @@ const ZellePayFlow: React.FC<Props> = ({ paymentId, itsNumber, onStartOver }) =>
   if (stage === "confirm") {
     return (
       <div className="card payment-card">
-        <div className="accent-font kicker" style={{ color: "var(--gold-dark)", marginBottom: 16 }}>
-          CONFIRM YOU SENT PAYMENT
-        </div>
-        <div className="gold-rule-small"></div>
+        <h2 className="payment-title">Confirm you sent payment</h2>
         <p className="meta" style={{ margin: "12px 0 20px", fontSize: 13 }}>
           Submitting this tells us you sent a Zelle transfer. It is a claim for staff to verify
           against the bank — not a confirmed receipt.
@@ -240,7 +232,7 @@ const ZellePayFlow: React.FC<Props> = ({ paymentId, itsNumber, onStartOver }) =>
 
         <form onSubmit={(e) => void handleConfirmSubmit(e)} className="log-form">
           <div className="input-group">
-            <label>CONFIRMATION NUMBER / LAST 4 *</label>
+            <label>Confirmation number or last 4</label>
             <input
               type="text"
               value={confirmationNumber}
@@ -253,7 +245,7 @@ const ZellePayFlow: React.FC<Props> = ({ paymentId, itsNumber, onStartOver }) =>
           </div>
 
           <div className="input-group">
-            <label>WHEN DID YOU SEND IT?</label>
+            <label>When did you send it?</label>
             <input
               type="datetime-local"
               value={claimedAt}
@@ -263,7 +255,7 @@ const ZellePayFlow: React.FC<Props> = ({ paymentId, itsNumber, onStartOver }) =>
           </div>
 
           <div className="input-group">
-            <label>SCREENSHOT (OPTIONAL)</label>
+            <label>Screenshot (optional)</label>
             <input
               type="file"
               accept="image/*"
@@ -301,10 +293,7 @@ const ZellePayFlow: React.FC<Props> = ({ paymentId, itsNumber, onStartOver }) =>
   // stage === "pay"
   return (
     <div className="card payment-card">
-      <div className="accent-font kicker" style={{ color: "var(--gold-dark)", marginBottom: 16 }}>
-        PAY WITH ZELLE
-      </div>
-      <div className="gold-rule-small"></div>
+      <h2 className="payment-title">Pay with Zelle</h2>
 
       {!zelleContact && (
         <div className="warning-panel" style={{ marginTop: 16 }}>
@@ -318,8 +307,8 @@ const ZellePayFlow: React.FC<Props> = ({ paymentId, itsNumber, onStartOver }) =>
 
       {zelleContact && (
         <>
-          <div className="field-label" style={{ color: "var(--gold-dark)", fontSize: 10, marginTop: 20 }}>
-            SEND TO
+          <div className="field-label" style={{ marginTop: 16 }}>
+            Send to
           </div>
           <div className="memo-container" onClick={() => void copy("contact", zelleContact)}>
             <div className="memo-left">
@@ -344,8 +333,8 @@ const ZellePayFlow: React.FC<Props> = ({ paymentId, itsNumber, onStartOver }) =>
         </>
       )}
 
-      <div className="field-label" style={{ color: "var(--gold-dark)", fontSize: 10, marginTop: 20 }}>
-        AMOUNT
+      <div className="field-label" style={{ marginTop: 16 }}>
+        Amount
       </div>
       <div
         className="memo-container"
@@ -368,8 +357,8 @@ const ZellePayFlow: React.FC<Props> = ({ paymentId, itsNumber, onStartOver }) =>
 
       {refCode && (
         <>
-          <div className="field-label" style={{ color: "var(--gold-dark)", fontSize: 10, marginTop: 20 }}>
-            REFERENCE (MEMO / NOTE)
+          <div className="field-label" style={{ marginTop: 16 }}>
+            Reference for the memo
           </div>
           <div className="memo-container" onClick={() => void copy("ref", refCode)}>
             <div className="memo-left">
@@ -397,7 +386,7 @@ const ZellePayFlow: React.FC<Props> = ({ paymentId, itsNumber, onStartOver }) =>
       {zelleContact && (
         <div className="qr-spread" style={{ marginTop: 24 }}>
           <div className="qr-frame">
-            <QRCodeSVG value={zelleContact} size={140} fgColor="#001529" level="H" />
+            <QRCodeSVG value={zelleContact} size={140} fgColor="#16211C" level="H" />
           </div>
           <div className="qr-actions">
             <p className="meta" style={{ fontSize: 12 }}>
@@ -440,6 +429,17 @@ const ZellePayFlow: React.FC<Props> = ({ paymentId, itsNumber, onStartOver }) =>
           line-height: 1.55;
         }
         .zelle-steps li { margin-bottom: 6px; }
+        .payment-title {
+          font-size: 18px;
+          font-weight: 600;
+          text-align: left;
+          margin-bottom: 4px;
+        }
+        .payment-lead {
+          font-weight: 600;
+          color: var(--ink);
+          margin-bottom: 8px;
+        }
       `}</style>
     </div>
   );

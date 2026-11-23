@@ -7,63 +7,41 @@ interface ProgressBarProps {
 }
 
 const ProgressBar: React.FC<ProgressBarProps> = ({ current, target, showPercentage = true }) => {
-  const percentage = Math.min(Math.round((current / target) * 100), 100);
-  
+  const percentage = target > 0 ? Math.min(Math.round((current / target) * 100), 100) : 0;
+
   return (
-    <div className="exchequer-progress">
-      <div className="progress-label">
-        {showPercentage && <span className="accent-font percentage">{percentage}%</span>}
-      </div>
-      
-      <div className="progress-track">
-        <div 
-          className="progress-fill" 
-          style={{ width: `${percentage}%` }}
-        >
-          <div className="progress-marker">✦</div>
-        </div>
+    <div className="progress">
+      {showPercentage && <span className="progress-percent">{percentage}%</span>}
+      <div
+        className="progress-track"
+        role="progressbar"
+        aria-valuenow={percentage}
+        aria-valuemin={0}
+        aria-valuemax={100}
+      >
+        <div className="progress-fill" style={{ width: `${percentage}%` }} />
       </div>
 
       <style>{`
-        .exchequer-progress {
-          margin: 12px 0;
-        }
-
-        .progress-label {
-          display: flex;
-          justify-content: flex-end;
-          margin-bottom: 4px;
-        }
-
-        .percentage {
-          font-size: 10px;
+        .progress { margin: 8px 0; }
+        .progress-percent {
+          display: block;
+          text-align: right;
+          font-size: 12px;
           font-weight: 600;
-          color: var(--gold-dark);
-          letter-spacing: 0.05em;
+          color: var(--ink-muted);
+          margin-bottom: 6px;
         }
-
         .progress-track {
-          height: 4px;
-          background: var(--gold-pale);
-          border-radius: 2px;
-          position: relative;
+          height: 6px;
+          background: var(--cream-deep);
+          border-radius: 999px;
+          overflow: hidden;
         }
-
         .progress-fill {
           height: 100%;
-          background: var(--gold);
-          border-radius: 2px;
-          position: relative;
-          transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        .progress-marker {
-          position: absolute;
-          right: -6px;
-          top: -6px;
-          color: var(--gold-dark);
-          font-size: 12px;
-          text-shadow: 0 0 4px rgba(201, 168, 76, 0.4);
+          background: var(--brand);
+          border-radius: 999px;
         }
       `}</style>
     </div>

@@ -1,7 +1,7 @@
 import React from "react";
 import { api } from "@tolobana/convex-backend/convex/_generated/api";
 import { useNavigate } from "react-router-dom";
-import { Heart, Users } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import PageMasthead from "../components/Layout/PageMasthead";
 import ListPageSkeleton from "../components/ListPageSkeleton";
 import ProgressBar from "../components/Hub/ProgressBar";
@@ -19,12 +19,7 @@ const Hub: React.FC = () => {
   if (collections === undefined) {
     return (
       <div className="hub-page">
-        <PageMasthead
-          title="Hub"
-          subtitle="Active community collections"
-          kicker="COMMUNITY HUB"
-          variant="navy"
-        />
+        <PageMasthead title="Hub" subtitle="Active collections" />
         <ListPageSkeleton rows={3} />
       </div>
     );
@@ -32,75 +27,56 @@ const Hub: React.FC = () => {
 
   return (
     <div className="hub-page">
-      <PageMasthead 
-        title="Hub" 
-        subtitle="Active community collections"
-        kicker="COMMUNITY HUB"
-        variant="navy"
-      />
+      <PageMasthead title="Hub" subtitle="Active collections" />
 
-      <div className="container" style={{ paddingTop: '24px' }}>
+      <div className="container" style={{ paddingTop: 20 }}>
         {collections.length === 0 ? (
           <div className="empty-state">
-            <Heart size={44} style={{ color: 'var(--gold)', marginBottom: '12px' }} />
-            <div className="ornament-rule" style={{ maxWidth: '160px', margin: '0 auto 16px' }}>
-              <span style={{ fontSize: '14px' }}>✦</span>
-            </div>
-            <h3 className="display-font" style={{ fontStyle: 'italic', color: 'var(--ink-muted)' }}>No active collections.</h3>
-            <p className="meta" style={{ marginTop: '4px' }}>Check back soon.</p>
+            <h3>No active collections</h3>
+            <p className="meta">Check back soon.</p>
           </div>
         ) : (
-          <div className="list list-stagger list-stagger--gap-md">
+          <div className="list-stagger list-stagger--gap-sm">
             {collections.map((col: any) => {
-              // Parse target amount for progress bar
               const targetMatch = col.amount_display?.match(/\$([0-9,]+)/);
-              const targetValue = targetMatch ? parseInt(targetMatch[1].replace(/,/g, '')) : 0;
+              const targetValue = targetMatch ? parseInt(targetMatch[1].replace(/,/g, "")) : 0;
 
               return (
-                <div 
-                  key={col._id} 
+                <article
+                  key={col._id}
                   className="card hub-card list-stagger-item"
                   onClick={() => navigate(`/hub/${col.slug}`)}
                 >
-                  <div className="card-top-info">
-                    <div className="badge badge-live">
-                      <span className="pulse-dot"></span>
-                      LIVE
-                    </div>
-                    <span className="accent-font kicker">COLLECTION ✦</span>
+                  <div className="hub-card-top">
+                    <h2>{col.title}</h2>
+                    <span className="badge badge-live">
+                      <span className="pulse-dot" />
+                      Open
+                    </span>
                   </div>
 
-                  <h2 className="display-font card-title">{col.title}</h2>
-                  
-                  <div className="double-rule-small"></div>
-                  
                   {targetValue > 0 && (
                     <div className="progress-section">
                       <ProgressBar current={col.totalRaised} target={targetValue} />
                     </div>
                   )}
 
-                  <div className="stats-grid">
-                    <div className="stat-item">
-                      <div className="display-font stat-value">${col.totalRaised.toLocaleString()}</div>
-                      <div className="accent-font stat-label">RAISED</div>
+                  <div className="stats-row">
+                    <div>
+                      <div className="stat-value">${col.totalRaised.toLocaleString()}</div>
+                      <div className="stat-label">Verified</div>
                     </div>
-                    
-                    <div className="stat-item">
-                      <div className="display-font stat-value">
-                        <Users size={20} style={{ marginRight: "6px" }} />
-                        {col.contributorCount}
-                      </div>
-                      <div className="accent-font stat-label">CONTRIBUTORS</div>
+                    <div>
+                      <div className="stat-value">{col.contributorCount}</div>
+                      <div className="stat-label">Contributors</div>
                     </div>
                   </div>
 
-                  {col.amount_display && (
-                    <div className="target-text accent-font">
-                      GOAL: {col.amount_display}
-                    </div>
-                  )}
-                </div>
+                  <div className="card-action">
+                    <span>View collection</span>
+                    <ChevronRight size={16} />
+                  </div>
+                </article>
               );
             })}
           </div>
@@ -108,96 +84,61 @@ const Hub: React.FC = () => {
       </div>
 
       <style>{`
-        .hub-page {
-          background-color: var(--cream);
-          min-height: 100vh;
-        }
+        .hub-page { min-height: 100vh; }
 
-        .hub-card {
-          cursor: pointer;
-          padding: 24px;
-        }
+        .hub-card { cursor: pointer; }
 
-        .card-top-info {
+        .hub-card-top {
           display: flex;
           justify-content: space-between;
-          align-items: center;
+          align-items: flex-start;
+          gap: 12px;
           margin-bottom: 12px;
+        }
+
+        .hub-card h2 {
+          font-size: 16px;
+          font-weight: 600;
         }
 
         .pulse-dot {
-          width: 5px;
-          height: 5px;
-          background: var(--gold);
+          width: 6px;
+          height: 6px;
+          background: var(--success);
           border-radius: 50%;
           display: inline-block;
-          margin-right: 6px;
         }
 
-        .kicker {
-          color: var(--gold-dark);
-          font-size: 10px;
-          font-weight: 600;
-          letter-spacing: 0.16em;
-        }
+        .progress-section { margin-bottom: 14px; }
 
-        .card-title {
-          font-size: 20px;
-          font-weight: 700;
-          color: var(--ink);
-          margin-bottom: 12px;
-        }
-
-        .double-rule-small {
-          height: 5px;
-          border-top: 1.5px solid var(--gold);
-          border-bottom: 0.5px solid var(--gold);
-          width: 80px;
-          margin-bottom: 20px;
-        }
-
-        .progress-section {
-          margin-bottom: 24px;
-        }
-
-        .stats-grid {
+        .stats-row {
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: 20px;
-        }
-
-        .stat-item {
-          display: flex;
-          flex-direction: column;
+          gap: 12px;
+          padding-top: 4px;
         }
 
         .stat-value {
-          font-size: 28px;
-          font-weight: 700;
-          color: var(--navy);
-          display: flex;
-          align-items: center;
+          font-size: 22px;
+          font-weight: 600;
+          letter-spacing: -0.02em;
+          color: var(--ink);
         }
 
         .stat-label {
-          font-size: 9px;
-          font-weight: 600;
-          letter-spacing: 0.1em;
-          color: var(--gold-dark);
-          margin-top: -2px;
+          font-size: 13px;
+          color: var(--ink-muted);
         }
 
-        .target-text {
-          margin-top: 16px;
-          font-size: 10px;
+        .card-action {
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          gap: 2px;
+          margin-top: 14px;
+          color: var(--brand);
+          font-size: 14px;
           font-weight: 600;
-          color: var(--gold-dark);
-          letter-spacing: 0.05em;
-        }
-
-        .empty-state {
-          text-align: center;
-          padding: 60px 0;
         }
       `}</style>
     </div>

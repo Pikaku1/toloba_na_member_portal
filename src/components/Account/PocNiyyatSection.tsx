@@ -71,8 +71,7 @@ const PocNiyyatSection: React.FC = () => {
 
   return (
     <section className="poc-section">
-      <div className="double-rule" />
-      <span className="accent-font kicker">POC — JAMAAT NIYYAT</span>
+      <h2 className="poc-title">Jamaat niyyat</h2>
       <p className="poc-lead">
         Totals of contributions logged by members under your Coordinator name.
       </p>
@@ -86,7 +85,7 @@ const PocNiyyatSection: React.FC = () => {
       {data && (
         <>
           <div className="poc-grand">
-            <span className="accent-font kicker">ALL JAMAATS</span>
+            <span className="poc-kicker">All jamaats</span>
             <div className="poc-grand-amount">{money(data.grand_total)}</div>
           </div>
 
@@ -132,8 +131,16 @@ const PocNiyyatSection: React.FC = () => {
 
       <style>{`
         .poc-section {
-          margin-top: 36px;
-          padding: 8px 4px 24px;
+          margin-top: 28px;
+        }
+        .poc-title {
+          font-size: 16px;
+          font-weight: 600;
+          margin-bottom: 4px;
+        }
+        .poc-kicker {
+          font-size: 13px;
+          color: var(--ink-muted);
         }
         .poc-lead {
           color: var(--ink-muted, #5c5c5c);
@@ -141,14 +148,13 @@ const PocNiyyatSection: React.FC = () => {
           margin: 8px 0 20px;
         }
         .poc-grand {
-          text-align: center;
-          margin-bottom: 20px;
+          margin-bottom: 16px;
         }
         .poc-grand-amount {
-          font-family: var(--font-display);
           font-size: 28px;
-          font-weight: 700;
-          color: var(--navy);
+          font-weight: 600;
+          letter-spacing: -0.03em;
+          color: var(--ink);
           margin-top: 4px;
         }
         .poc-jamaat-list {
@@ -189,10 +195,9 @@ const PocNiyyatSection: React.FC = () => {
         .poc-muted { color: rgba(10, 33, 20, 0.5); font-size: 13px; }
         .poc-error { color: var(--error, #b00020); font-size: 13px; }
         .kicker {
-          color: var(--gold);
-          font-size: 9px;
-          font-weight: 600;
-          letter-spacing: 0.18em;
+          color: var(--ink-muted);
+          font-size: 13px;
+          font-weight: 500;
           display: block;
         }
       `}</style>

@@ -1,8 +1,8 @@
 import React from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import SideNav from "./SideNav";
 import BottomNav from "./BottomNav";
-import DesktopHeader from "./DesktopHeader";
 
 const ProtectedLayout: React.FC = () => {
   const { member, isLoading } = useAuth();
@@ -15,8 +15,8 @@ const ProtectedLayout: React.FC = () => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'var(--navy)',
-        color: 'var(--white)'
+        backgroundColor: 'var(--bg)',
+        color: 'var(--brand)'
       }}>
         <div className="loading-spinner"></div>
       </div>
@@ -29,7 +29,7 @@ const ProtectedLayout: React.FC = () => {
 
   return (
     <div className="app-layout">
-      <DesktopHeader />
+      <SideNav />
       <main className="main-content">
         <div key={location.pathname} className="route-outlet-enter">
           <Outlet />
@@ -40,19 +40,14 @@ const ProtectedLayout: React.FC = () => {
       <style>{`
         .app-layout {
           min-height: 100vh;
-          display: flex;
-          flex-direction: column;
-          background-color: var(--cream);
+          min-height: 100dvh;
+          background-color: var(--bg);
         }
 
         .main-content {
-          flex: 1;
-        }
-
-        @media (min-width: 768px) {
-          .main-content {
-            /* Desktop adjustments if needed */
-          }
+          margin-left: var(--nav-width);
+          min-height: 100vh;
+          min-height: 100dvh;
         }
       `}</style>
     </div>

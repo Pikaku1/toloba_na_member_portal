@@ -7,134 +7,69 @@ import PocNiyyatSection from "../components/Account/PocNiyyatSection";
 const Account: React.FC = () => {
   const { member, logout } = useAuth();
 
+  const rows = [
+    { label: "Name", value: member?.name },
+    { label: "ITS number", value: member?.its_number },
+    member?.designation ? { label: "Designation", value: member.designation } : null,
+    member?.jamaat ? { label: "Jamaat", value: member.jamaat } : null,
+    member?.email ? { label: "Email", value: member.email } : null,
+  ].filter(Boolean) as { label: string; value?: string }[];
+
   return (
     <div className="account-page">
-      <PageMasthead 
-        title="Account" 
-        subtitle="Manage your profile"
-        kicker="YOUR MEMBERSHIP"
-        variant="navy"
-      />
+      <PageMasthead title="Account" subtitle="Your membership" />
 
-      <div className="container">
-        <div className="card-dark pattern-bg member-card">
-          <div className="double-rule"></div>
-          
-          <div className="member-info">
-            <span className="accent-font kicker">MEMBER IDENTITY</span>
-            
-            <div className="signature-section">
-              <div className="member-name signature-font">{member?.name}</div>
-              <div className="gold-rule" style={{ margin: '4px auto 16px', maxWidth: '240px' }}></div>
+      <div className="container" style={{ paddingTop: 20 }}>
+        <section className="card profile-card">
+          {rows.map((row) => (
+            <div key={row.label} className="profile-row">
+              <span>{row.label}</span>
+              <strong>{row.value}</strong>
             </div>
-            
-            <div className="ornament-rule" style={{ margin: '24px auto' }}>
-              <span style={{ fontSize: '12px' }}>✦</span>
-            </div>
-            
-            <span className="accent-font kicker">ITS NUMBER</span>
-            <div className="its-display">{member?.its_number}</div>
-
-            {member?.designation && (
-              <>
-                <div className="ornament-rule" style={{ margin: '24px auto' }}>
-                  <span style={{ fontSize: '12px' }}>✦</span>
-                </div>
-                <span className="accent-font kicker">DESIGNATION</span>
-                <div className="its-display designation-display">{member.designation}</div>
-              </>
-            )}
-
-            {member?.jamaat && (
-              <>
-                <div className="ornament-rule" style={{ margin: '24px auto' }}>
-                  <span style={{ fontSize: '12px' }}>✦</span>
-                </div>
-                <span className="accent-font kicker">JAMAAT</span>
-                <div className="its-display designation-display">{member.jamaat}</div>
-              </>
-            )}
-          </div>
-
-          <div className="double-rule"></div>
-        </div>
+          ))}
+        </section>
 
         <PocNiyyatSection />
 
-        <div className="actions" style={{ marginTop: '40px' }}>
-          <button className="btn btn-ghost" onClick={logout}>
-            <LogOut size={18} style={{ marginRight: "10px" }} />
-            SIGN OUT
-          </button>
-        </div>
+        <button className="btn btn-ghost sign-out" onClick={logout}>
+          <LogOut size={16} />
+          Sign out
+        </button>
       </div>
 
       <style>{`
-        .account-page {
-          background-color: var(--cream);
-          min-height: 100vh;
+        .account-page { min-height: 100vh; }
+
+        .profile-card {
+          padding: 4px 16px;
         }
 
-        .member-card {
-          margin-top: 24px;
-          padding: 28px;
-          text-align: center;
-          position: relative;
-          border-radius: var(--radius-sm);
+        .profile-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: baseline;
+          gap: 16px;
+          padding: 14px 0;
+          border-bottom: 1px solid var(--border);
         }
 
-        .member-card::after {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background: radial-gradient(ellipse at center, 
-            var(--navy-mid) 20%, 
-            transparent 75%
-          );
-          pointer-events: none;
+        .profile-row:last-child {
+          border-bottom: none;
         }
 
-        .member-info {
-          position: relative;
-          z-index: 1;
-          padding: 20px 0;
+        .profile-row span {
+          font-size: 13px;
+          color: var(--ink-muted);
         }
 
-        .signature-section {
-          margin: 12px 0;
-        }
-
-        .signature-font {
-          font-family: var(--font-signature);
-          font-size: 32px;
+        .profile-row strong {
+          font-size: 15px;
           font-weight: 600;
-          color: var(--white);
-          line-height: 1.15;
-          letter-spacing: -0.01em;
-          text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+          text-align: right;
         }
 
-        .kicker {
-          color: var(--gold);
-          font-size: 9px;
-          font-weight: 600;
-          letter-spacing: 0.18em;
-          display: block;
-          margin-bottom: 8px;
-        }
-
-        .its-display {
-          color: var(--white);
-          font-family: var(--font-ui);
-          font-size: 20px;
-          font-weight: 600;
-          letter-spacing: 0.08em;
-          margin-top: 4px;
-        }
-
-        .ornament-rule {
-          margin: 16px auto;
-          max-width: 200px;
+        .sign-out {
+          margin-top: 20px;
         }
       `}</style>
     </div>

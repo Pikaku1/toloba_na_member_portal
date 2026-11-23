@@ -14,59 +14,57 @@ const BottomNav: React.FC = () => {
   );
   const showHub = (collections?.length ?? 0) > 0;
 
-  // Hide on full-bleed detail routes so fixed footers (submit, pay, etc.) stay usable on mobile.
   const isHubDetailPage = pathname.startsWith("/hub/") && pathname !== "/hub";
   const isSurveyDetailPage = pathname.startsWith("/surveys/");
 
   if (isHubDetailPage || isSurveyDetailPage) return null;
 
   return (
-    <nav className="bottom-nav">
+    <nav className="bottom-nav" aria-label="Primary">
       <NavLink
         to="/announcements"
-        className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}
+        className={({ isActive }) => `tab-item ${isActive ? "active" : ""}`}
       >
-        <Bell size={22} />
-        <span className="accent-font">Updates</span>
+        <Bell size={18} strokeWidth={1.75} />
+        <span>Updates</span>
       </NavLink>
       <NavLink
         to="/surveys"
-        className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}
+        className={({ isActive }) => `tab-item ${isActive ? "active" : ""}`}
       >
-        <ClipboardList size={22} />
-        <span className="accent-font">Surveys</span>
+        <ClipboardList size={18} strokeWidth={1.75} />
+        <span>Surveys</span>
       </NavLink>
       {showHub && (
         <NavLink
           to="/hub"
-          className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}
+          className={({ isActive }) => `tab-item ${isActive ? "active" : ""}`}
         >
-          <Heart size={22} />
-          <span className="accent-font">Hub</span>
+          <Heart size={18} strokeWidth={1.75} />
+          <span>Hub</span>
         </NavLink>
       )}
       <NavLink
         to="/account"
-        className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}
+        className={({ isActive }) => `tab-item ${isActive ? "active" : ""}`}
       >
-        <User size={22} />
-        <span className="accent-font">Account</span>
+        <User size={18} strokeWidth={1.75} />
+        <span>Account</span>
       </NavLink>
 
       <style>{`
         .bottom-nav {
           position: fixed;
-          bottom: 0;
           left: 0;
           right: 0;
-          background: var(--navy);
-          border-top: 2px solid var(--gold);
-          height: 64px;
+          bottom: 0;
+          z-index: 120;
           display: flex;
-          justify-content: space-around;
-          align-items: center;
-          padding-bottom: env(safe-area-inset-bottom);
-          z-index: 100;
+          align-items: stretch;
+          height: var(--tabbar-height);
+          padding-bottom: env(safe-area-inset-bottom, 0px);
+          background: var(--surface);
+          border-top: 1px solid var(--border);
         }
 
         @media (min-width: 768px) {
@@ -75,37 +73,26 @@ const BottomNav: React.FC = () => {
           }
         }
 
-        .nav-item {
+        .tab-item {
           flex: 1;
+          min-height: 44px;
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
+          gap: 2px;
           text-decoration: none;
-          color: rgba(255, 255, 255, 0.35);
-          gap: 4px;
-          transition:
-            color var(--transition-fast),
-            transform var(--transition-fast);
+          color: var(--ink-muted);
         }
 
-        .nav-item:active {
-          transform: scale(0.96);
-        }
-
-        .nav-item.active {
-          color: var(--white);
-        }
-
-        .nav-item span {
-          font-size: 9px;
+        .tab-item span {
+          font-size: 11px;
           font-weight: 600;
-          letter-spacing: 0.12em;
-          text-transform: uppercase;
+          line-height: 1.1;
         }
 
-        .nav-item svg {
-          stroke-width: 2px;
+        .tab-item.active {
+          color: var(--brand);
         }
       `}</style>
     </nav>
