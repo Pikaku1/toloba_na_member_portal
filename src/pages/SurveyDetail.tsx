@@ -115,43 +115,50 @@ const SurveyDetail: React.FC = () => {
 
   if (isSuccess) {
     return (
-      <div className="success-overlay pattern-bg">
+      <div className="success-overlay">
         <div className="success-panel">
-          <div className="double-rule"></div>
-          <div className="success-content">
-            <div className="check-icon accent-font icon-success-pop">✓</div>
-            <div className="accent-font kicker">RESPONSE RECORDED</div>
-            <h1 className="display-font success-title">Your submission has been saved.</h1>
-            <p className="success-subtitle">Thank you for your contribution to the community.</p>
-            <div className="ornament-rule" style={{ margin: '32px auto' }}>
-              <span style={{ fontSize: '14px' }}>✦</span>
-            </div>
-            <button onClick={() => navigate("/surveys")} className="btn btn-ghost" style={{ color: 'var(--white)', borderColor: 'rgba(255,255,255,0.35)' }}>
-              ← BACK TO SURVEYS
-            </button>
-          </div>
-          <div className="double-rule"></div>
+          <div className="check-icon icon-success-pop" aria-hidden="true">✓</div>
+          <p className="kicker">Response recorded</p>
+          <h1 className="success-title">Your submission has been saved.</h1>
+          <p className="success-subtitle">Thank you. You can close this survey.</p>
+          <button onClick={() => navigate("/surveys")} className="btn btn-navy">
+            Back to surveys
+          </button>
         </div>
 
         <style>{`
           .success-overlay {
-            height: 100vh;
-            background-color: var(--navy);
+            min-height: 100vh;
+            background: var(--bg);
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 24px 20px;
           }
           .success-panel {
             width: 100%;
-            max-width: 500px;
+            max-width: 420px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px 24px;
             text-align: center;
           }
-          .success-content { padding: 48px 0; }
-          .check-icon { font-size: 48px; color: var(--gold); margin-bottom: 16px; }
-          .kicker { color: var(--gold); font-size: 11px; font-weight: 600; letter-spacing: 0.16em; margin-bottom: 12px; }
-          .success-title { color: var(--white); font-size: 24px; font-weight: 700; font-style: italic; margin-bottom: 8px; }
-          .success-subtitle { color: rgba(255,255,255,0.65); font-size: 15px; }
+          .check-icon {
+            width: 44px;
+            height: 44px;
+            margin: 0 auto 16px;
+            border-radius: 999px;
+            background: var(--success-bg);
+            color: var(--success);
+            display: grid;
+            place-items: center;
+            font-size: 20px;
+            font-weight: 700;
+          }
+          .kicker { color: var(--success); font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+          .success-title { font-size: 22px; margin-bottom: 8px; }
+          .success-subtitle { color: var(--ink-muted); font-size: 15px; margin-bottom: 24px; }
         `}</style>
       </div>
     );
@@ -173,7 +180,7 @@ const SurveyDetail: React.FC = () => {
         <form onSubmit={handleSubmit}>
           {stableQuestions.map((q: any) => (
             <div key={q._id} className="question-block">
-              <div className="field-label" style={{ color: 'var(--gold-dark)' }}>
+              <div className="field-label">
                 {q.label} {q.required && <span style={{ color: 'var(--error)' }}>*</span>}
               </div>
               {q.help_text && <p className="help-text">{q.help_text}</p>}
@@ -202,7 +209,7 @@ const SurveyDetail: React.FC = () => {
                 className="btn btn-gold" 
                 disabled={isSubmitting || !isFormValid}
               >
-                {isSubmitting ? <div className="loading-spinner"></div> : "SUBMIT RESPONSES"}
+                {isSubmitting ? <div className="loading-spinner"></div> : "Submit"}
               </button>
             </div>
           </div>
@@ -219,18 +226,11 @@ const SurveyDetail: React.FC = () => {
         .sticky-header {
           position: fixed;
           top: 0;
-          left: 0;
+          left: var(--nav-width);
           right: 0;
-          background: var(--navy);
+          background: var(--surface);
+          border-bottom: 1px solid var(--border);
           z-index: 100;
-        }
-
-        @media (min-width: 768px) {
-          .sticky-header {
-            max-width: 100%;
-            left: 0;
-            transform: none;
-          }
         }
 
         .header-container {
@@ -244,9 +244,9 @@ const SurveyDetail: React.FC = () => {
         }
 
         .header-container h1 {
-          color: var(--white);
-          font-size: 17px;
-          font-weight: 700;
+          color: var(--ink);
+          font-size: 16px;
+          font-weight: 600;
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
@@ -255,7 +255,7 @@ const SurveyDetail: React.FC = () => {
         .back-link {
           background: none;
           border: none;
-          color: var(--white);
+          color: var(--ink);
           display: flex;
           align-items: center;
           padding: 8px;
@@ -263,11 +263,7 @@ const SurveyDetail: React.FC = () => {
           cursor: pointer;
         }
 
-        .double-rule-thin {
-          height: 1px;
-          background: var(--gold);
-          opacity: 0.6;
-        }
+        .double-rule-thin { display: none; }
 
         .form-container {
           padding-top: 28px;
@@ -285,21 +281,16 @@ const SurveyDetail: React.FC = () => {
           margin-top: -4px;
         }
 
-        .micro-rule {
-          height: 1px;
-          background: var(--gold);
-          opacity: 0.15;
-          margin-top: 16px;
-        }
+        .micro-rule { display: none; }
 
         .submit-bar {
           position: fixed;
           bottom: 0;
-          left: 0;
+          left: var(--nav-width);
           right: 0;
-          background: var(--navy);
-          border-top: 2px solid var(--gold);
-          padding: 16px 20px calc(16px + env(safe-area-inset-bottom, 0px));
+          background: var(--surface);
+          border-top: 1px solid var(--border);
+          padding: 12px 20px calc(12px + env(safe-area-inset-bottom, 0px));
           z-index: 110;
         }
 
@@ -357,11 +348,10 @@ const QuestionInput: React.FC<{
           <style>{`
             .choice-group { display: flex; flex-direction: column; gap: 8px; }
             .choice-row { 
-              height: 52px; padding: 0 16px; border: 1px solid var(--parchment); border-left: 3px solid transparent;
+              height: 48px; padding: 0 14px; border: 1px solid var(--border); border-radius: 8px;
               display: flex; align-items: center; gap: 12px; cursor: pointer; background: var(--white);
-              transition: all 0.2s ease;
             }
-            .choice-row.selected { border-left-color: var(--gold); background: var(--gold-pale); }
+            .choice-row.selected { border-color: var(--brand); background: var(--brand-soft); }
             .choice-indicator { width: 18px; height: 18px; border: 1.5px solid var(--parchment); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
             .selected .choice-indicator { border-color: var(--gold); }
             .choice-inner { width: 10px; height: 10px; border-radius: 50%; background: transparent; transition: background 0.2s; }
@@ -397,11 +387,10 @@ const QuestionInput: React.FC<{
           <style>{`
             .choice-group { display: flex; flex-direction: column; gap: 8px; }
             .choice-row { 
-              min-height: 52px; padding: 10px 16px; border: 1px solid var(--parchment); border-left: 3px solid transparent;
+              min-height: 48px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px;
               display: flex; align-items: center; gap: 12px; cursor: pointer; background: var(--white);
-              transition: all 0.2s ease;
             }
-            .choice-row.selected { border-left-color: var(--gold); background: var(--gold-pale); }
+            .choice-row.selected { border-color: var(--brand); background: var(--brand-soft); }
             .choice-indicator.checkbox { width: 18px; height: 18px; border: 1.5px solid var(--parchment); border-radius: 4px; display: flex; align-items: center; justify-content: center; }
             .selected .choice-indicator.checkbox { border-color: var(--gold); }
             .choice-inner { width: 10px; height: 10px; border-radius: 2px; background: transparent; transition: background 0.2s; }
@@ -435,23 +424,23 @@ const QuestionInput: React.FC<{
             className={`choice-btn ${stringValue === "Yes" ? "selected" : ""}`}
             onClick={() => !disabled && onChange("Yes")}
           >
-            YES
+            Yes
           </button>
           <button 
             type="button" 
             className={`choice-btn ${stringValue === "No" ? "selected" : ""}`}
             onClick={() => !disabled && onChange("No")}
           >
-            NO
+            No
           </button>
           <style>{`
             .yes-no-group { display: flex; gap: 12px; }
             .choice-btn { 
-              flex: 1; height: 52px; border: 1.5px solid var(--gold); border-radius: var(--radius-md);
-              background: transparent; color: var(--gold); font-weight: 600; letter-spacing: 0.05em;
-              font-family: var(--font-ui); transition: all 0.2s;
+              flex: 1; height: 48px; border: 1px solid var(--border); border-radius: var(--radius-md);
+              background: var(--surface); color: var(--ink); font-weight: 600;
+              font-family: var(--font-ui); cursor: pointer;
             }
-            .choice-btn.selected { background: var(--gold); color: var(--navy); }
+            .choice-btn.selected { background: var(--brand); color: white; border-color: var(--brand); }
           `}</style>
         </div>
       );

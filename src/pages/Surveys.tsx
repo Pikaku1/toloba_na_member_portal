@@ -2,7 +2,7 @@ import React from "react";
 import { api } from "@tolobana/convex-backend/convex/_generated/api";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { FileText } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { useAdminReadQuery } from "../hooks/useDbQuery";
 import PageMasthead from "../components/Layout/PageMasthead";
 import ListPageSkeleton from "../components/ListPageSkeleton";
@@ -14,12 +14,7 @@ const Surveys: React.FC = () => {
   if (forms === undefined) {
     return (
       <div className="surveys-page">
-        <PageMasthead
-          title="Surveys"
-          subtitle="Have your say in the community"
-          kicker="COMMUNITY VOICE"
-          variant="navy"
-        />
+        <PageMasthead title="Surveys" subtitle="Open responses from the community" />
         <ListPageSkeleton rows={3} />
       </div>
     );
@@ -27,47 +22,26 @@ const Surveys: React.FC = () => {
 
   return (
     <div className="surveys-page">
-      <PageMasthead 
-        title="Surveys" 
-        subtitle="Have your say in the community"
-        kicker="COMMUNITY VOICE"
-        variant="navy"
-      />
+      <PageMasthead title="Surveys" subtitle="Open responses from the community" />
 
-      <div className="container" style={{ paddingTop: '24px' }}>
+      <div className="container" style={{ paddingTop: 20 }}>
         {forms.length === 0 ? (
           <div className="empty-state">
-            <FileText size={44} style={{ color: 'var(--gold)', marginBottom: '12px' }} />
-            <div className="ornament-rule" style={{ maxWidth: '160px', margin: '0 auto 16px' }}>
-              <span style={{ fontSize: '14px' }}>✦</span>
-            </div>
-            <h3 className="display-font" style={{ fontStyle: 'italic', color: 'var(--ink-muted)' }}>No open surveys.</h3>
-            <p className="meta" style={{ marginTop: '4px' }}>Check back soon.</p>
+            <h3>No open surveys</h3>
+            <p className="meta">Check back soon.</p>
           </div>
         ) : (
-          <div className="list list-stagger list-stagger--gap-sm">
+          <div className="list-stagger list-stagger--gap-sm">
             {forms.map((form: any) => (
-              <SurveyCard 
-                key={form._id} 
-                form={form} 
-                memberEmail={member?.email || ""} 
+              <SurveyCard
+                key={form._id}
+                form={form}
+                memberEmail={member?.email || ""}
               />
             ))}
           </div>
         )}
       </div>
-
-      <style>{`
-        .surveys-page {
-          background-color: var(--cream);
-          min-height: 100vh;
-        }
-
-        .empty-state {
-          text-align: center;
-          padding: 60px 0;
-        }
-      `}</style>
     </div>
   );
 };
@@ -78,118 +52,83 @@ const SurveyCard: React.FC<{ form: any; memberEmail: string }> = ({ form, member
     api.surveys.getOwnSubmission,
     memberEmail ? { formId: form._id, email: memberEmail } : "skip",
   );
-  
+
   const isSubmitted = !!submission;
 
   return (
-    <div 
+    <article
       className={`card survey-card list-stagger-item ${isSubmitted ? "submitted" : ""}`}
       onClick={() => !isSubmitted && navigate(`/surveys/${form.slug}`)}
     >
-      <div className="card-top-info">
-        <div className="badge-row">
-          <div className="badge badge-live">
-            <span className="pulse-dot"></span>
-            LIVE
-          </div>
-          {isSubmitted && (
-            <div className="badge badge-submitted">
-              ✓ SUBMITTED
-            </div>
-          )}
-        </div>
-        <span className="accent-font kicker">SURVEY ✦</span>
+      <div className="survey-card-top">
+        <h2>{form.title}</h2>
+        {isSubmitted ? (
+          <span className="badge badge-submitted">Submitted</span>
+        ) : (
+          <span className="badge badge-live">
+            <span className="pulse-dot" />
+            Open
+          </span>
+        )}
       </div>
 
-      <h2 className="display-font card-title">{form.title}</h2>
-      
-      <div className="gold-rule-small"></div>
-      
-      {form.description && (
-        <p className="description-text">{form.description}</p>
-      )}
-      
+      {form.description && <p className="description-text">{form.description}</p>}
+
       {!isSubmitted && (
         <div className="card-action">
-          <span className="accent-font">BEGIN SURVEY →</span>
+          <span>Open survey</span>
+          <ChevronRight size={16} />
         </div>
       )}
 
       <style>{`
         .survey-card {
           cursor: pointer;
-          transition: all var(--transition-fast);
         }
 
         .survey-card.submitted {
           cursor: default;
-          opacity: 0.7;
         }
 
-        .card-top-info {
+        .survey-card-top {
           display: flex;
           justify-content: space-between;
-          align-items: center;
-          margin-bottom: 12px;
+          align-items: flex-start;
+          gap: 12px;
         }
 
-        .badge-row {
-          display: flex;
-          gap: 8px;
-        }
-
-        .kicker {
-          color: var(--gold-dark);
-          font-size: 10px;
+        .survey-card h2 {
+          font-size: 16px;
           font-weight: 600;
-          letter-spacing: 0.16em;
         }
 
         .pulse-dot {
-          width: 5px;
-          height: 5px;
-          background: var(--gold);
+          width: 6px;
+          height: 6px;
+          background: var(--success);
           border-radius: 50%;
           display: inline-block;
-          margin-right: 6px;
-        }
-
-        .card-title {
-          font-size: 18px;
-          font-weight: 700;
-          color: var(--ink);
-          margin-bottom: 8px;
-        }
-
-        .gold-rule-small {
-          height: 1px;
-          background: linear-gradient(to right, var(--gold), transparent);
-          width: 60px;
-          margin-bottom: 16px;
         }
 
         .description-text {
-          font-family: var(--font-ui);
           font-size: 14px;
           color: var(--ink-secondary);
-          margin-bottom: 16px;
+          margin-top: 8px;
           line-height: 1.5;
         }
 
         .card-action {
           display: flex;
+          align-items: center;
           justify-content: flex-end;
-          margin-top: 8px;
-        }
-
-        .card-action span {
-          color: var(--gold-dark);
-          font-size: 10px;
+          gap: 2px;
+          margin-top: 14px;
+          color: var(--brand);
+          font-size: 14px;
           font-weight: 600;
-          letter-spacing: 0.1em;
         }
       `}</style>
-    </div>
+    </article>
   );
 };
 

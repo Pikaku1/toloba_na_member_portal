@@ -6,7 +6,6 @@ import { ConvexError } from "convex/values";
 import { useAuth } from "../context/AuthContext";
 import { ArrowLeft, Plus, Trash2 } from "lucide-react";
 import ProgressBar from "../components/Hub/ProgressBar";
-import ContributionChart from "../components/Hub/ContributionChart";
 import ZellePayFlow from "../components/Hub/ZellePayFlow";
 import { useAdminAction, useAdminReadQuery } from "../hooks/useDbQuery";
 import ListPageSkeleton from "../components/ListPageSkeleton";
@@ -315,8 +314,6 @@ const HubDetail: React.FC = () => {
     setError(null);
   };
 
-  // Mock trend data for demonstration
-  const trendData = [1200, 1800, 1600, 2400, 3100, 2800, 3600, 4200];
   const targetMatch = collection.amount_display?.match(/\$([0-9,]+)/);
   const targetValue = targetMatch ? parseInt(targetMatch[1].replace(/,/g, '')) : 0;
 
@@ -333,62 +330,42 @@ const HubDetail: React.FC = () => {
       </header>
 
       <div className="container" style={{ paddingTop: '28px' }}>
-        {/* Hero Spread Panel */}
-        <div className="card-dark pattern-bg hero-panel">
-          <div className="double-rule"></div>
-          
-          <div className="hero-content">
-            <span className="accent-font kicker">COLLECTION</span>
-            <h1 className="display-font hero-title">{collection.title}</h1>
-            
-            <div className="ornament-rule" style={{ margin: '24px auto' }}>
-              <span style={{ fontSize: '12px' }}>✦</span>
+        <section className="card hero-panel">
+          <h2 className="hero-title">{collection.title}</h2>
+          <div className="hero-stats">
+            <div>
+              <div className="hero-stat-value">${collection.totalRaised.toLocaleString()}</div>
+              <div className="hero-stat-label">Verified</div>
             </div>
-            
-            <div className="hero-stats">
-              <div className="stat-box">
-                <div className="display-font hero-stat-value">${collection.totalRaised.toLocaleString()}</div>
-                <div className="accent-font hero-stat-label">VERIFIED</div>
-              </div>
-              <div className="stat-box">
-                <div className="display-font hero-stat-value">{collection.contributorCount}</div>
-                <div className="accent-font hero-stat-label">CONTRIBUTORS</div>
-              </div>
+            <div>
+              <div className="hero-stat-value">{collection.contributorCount}</div>
+              <div className="hero-stat-label">Contributors</div>
             </div>
-
-            {targetValue > 0 && (
-              <div className="hero-progress">
-                <ProgressBar current={collection.totalRaised} target={targetValue} />
-                <div className="target-label accent-font">TARGET: {collection.amount_display}</div>
-              </div>
-            )}
           </div>
 
-          <div className="double-rule"></div>
-        </div>
+          {targetValue > 0 && (
+            <div className="hero-progress">
+              <ProgressBar current={collection.totalRaised} target={targetValue} />
+              <div className="target-label">Suggested: {collection.amount_display}</div>
+            </div>
+          )}
+        </section>
 
-        {/* Trend Chart */}
-        <ContributionChart data={trendData} />
-
-        {/* Contributors Section */}
         <section className="contributors-section">
-          <h3 className="accent-font section-title">WHO'S CONTRIBUTED</h3>
-          <div className="ornament-rule-small">
-            <span style={{ fontSize: '10px' }}>✦</span>
-          </div>
+          <h3 className="section-title">Contributors</h3>
 
           <div className="contributor-count-block">
             {collection.contributorCount === 0 ? (
-              <p className="display-font empty-contrib">Be the first to contribute.</p>
+              <p className="empty-contrib">Be the first to contribute.</p>
             ) : (
               <>
-                <div className="display-font contributor-count-value">
+                <div className="contributor-count-value">
                   {collection.contributorCount}
                 </div>
-                <p className="accent-font contributor-count-label">
+                <p className="contributor-count-label">
                   {collection.contributorCount === 1
-                    ? "MEMBER HAS CONTRIBUTED"
-                    : "MEMBERS HAVE CONTRIBUTED"}
+                    ? "member has contributed"
+                    : "members have contributed"}
                 </p>
               </>
             )}
@@ -405,8 +382,8 @@ const HubDetail: React.FC = () => {
             />
           </div>
         ) : !showPayment ? (
-          <button className="btn btn-gold" onClick={() => setShowPayment(true)} style={{ marginTop: '32px' }}>
-            {isLeadershipCampaign ? "PAY CHAPTER PLEDGE VIA ZELLE" : "PAY WITH ZELLE"}
+          <button className="btn btn-navy" onClick={() => setShowPayment(true)} style={{ marginTop: '32px' }}>
+            {isLeadershipCampaign ? "Pay chapter pledge with Zelle" : "Pay with Zelle"}
           </button>
         ) : (
           <div className="reveal-content route-outlet-enter">
@@ -425,7 +402,7 @@ const HubDetail: React.FC = () => {
                 </p>
 
                 <div className="input-group">
-                  <label>PLEDGED / PAYMENT TOTAL (USD) *</label>
+                  <label>Pledged total (USD)</label>
                   <input
                     type="number"
                     inputMode="decimal"
@@ -442,8 +419,8 @@ const HubDetail: React.FC = () => {
                   </p>
                 </div>
 
-                <div className="field-label" style={{ color: "var(--gold-dark)", fontSize: "10px", marginBottom: 8 }}>
-                  MEMBER BREAKDOWN
+                <div className="field-label" style={{ marginBottom: 8 }}>
+                  Member breakdown
                 </div>
 
                 {rosterLoading && (
@@ -597,7 +574,7 @@ const HubDetail: React.FC = () => {
                 </div>
 
                 <div className="input-group">
-                  <label>NOTE (OPTIONAL)</label>
+                  <label>Note (optional)</label>
                   <textarea
                     rows={2}
                     placeholder="Optional message…"
@@ -614,26 +591,22 @@ const HubDetail: React.FC = () => {
                   </p>
                 )}
 
-                <div className="ornament-rule" style={{ margin: "32px 0" }}>
-                  <span style={{ fontSize: "14px" }}>✦</span>
-                </div>
-
                 <button
                   type="submit"
-                  className="btn btn-gold"
+                  className="btn btn-navy"
                   disabled={isSubmitting || !breakdownMatches || pledgeTotal <= 0}
                 >
                   {isSubmitting ? (
                     <div className="loading-spinner"></div>
                   ) : (
-                    "CONTINUE TO ZELLE"
+                    "Continue to Zelle"
                   )}
                 </button>
               </form>
             ) : (
               <form onSubmit={handleSubmitPersonal} className="log-form">
                 <div className="input-group">
-                  <label>AMOUNT (USD) *</label>
+                  <label>Amount (USD)</label>
                   <input
                     type="number"
                     inputMode="decimal"
@@ -648,7 +621,7 @@ const HubDetail: React.FC = () => {
                 </div>
 
                 <div className="input-group">
-                  <label>NOTE (OPTIONAL)</label>
+                  <label>Note (optional)</label>
                   <textarea
                     rows={2}
                     placeholder="Optional message..."
@@ -665,19 +638,15 @@ const HubDetail: React.FC = () => {
                   </p>
                 )}
 
-                <div className="ornament-rule" style={{ margin: "32px 0" }}>
-                  <span style={{ fontSize: "14px" }}>✦</span>
-                </div>
-
                 <button
                   type="submit"
-                  className="btn btn-gold"
+                  className="btn btn-navy"
                   disabled={isSubmitting || !amount}
                 >
                   {isSubmitting ? (
                     <div className="loading-spinner"></div>
                   ) : (
-                    "CONTINUE TO ZELLE"
+                    "Continue to Zelle"
                   )}
                 </button>
               </form>
@@ -696,9 +665,10 @@ const HubDetail: React.FC = () => {
         .sticky-header {
           position: fixed;
           top: 0;
-          left: 0;
+          left: var(--nav-width);
           right: 0;
-          background: var(--green);
+          background: var(--surface);
+          border-bottom: 1px solid var(--border);
           z-index: 100;
         }
 
@@ -713,9 +683,9 @@ const HubDetail: React.FC = () => {
         }
 
         .header-container h1 {
-          color: var(--white);
-          font-size: 17px;
-          font-weight: 700;
+          color: var(--ink);
+          font-size: 16px;
+          font-weight: 600;
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
@@ -724,7 +694,7 @@ const HubDetail: React.FC = () => {
         .back-link {
           background: none;
           border: none;
-          color: var(--white);
+          color: var(--ink);
           display: flex;
           align-items: center;
           padding: 8px;
@@ -732,96 +702,58 @@ const HubDetail: React.FC = () => {
           cursor: pointer;
         }
 
-        .double-rule-thin {
-          height: 1px;
-          background: var(--gold);
-          opacity: 0.6;
-        }
+        .double-rule-thin { display: none; }
 
         .hero-panel {
-          padding: 28px;
-          text-align: center;
-          position: relative;
-          border-radius: var(--radius-sm);
-        }
-
-        .hero-panel::after {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background: radial-gradient(ellipse at center, 
-            var(--navy-mid) 20%, 
-            transparent 75%
-          );
-          pointer-events: none;
-        }
-
-        .hero-content {
-          position: relative;
-          z-index: 1;
-          padding: 20px 0;
-        }
-
-        .kicker {
-          color: var(--gold);
-          font-size: 10px;
-          font-weight: 600;
-          letter-spacing: 0.18em;
-          display: block;
-          margin-bottom: 8px;
-        }
-
-        .hero-title {
-          color: var(--white);
-          font-size: 26px;
-          font-weight: 700;
-          margin-bottom: 4px;
-        }
-
-        .hero-stats {
-          display: flex;
-          justify-content: center;
-          gap: 48px;
-          margin-bottom: 24px;
-        }
-
-        .hero-stat-value {
-          color: var(--white);
-          font-size: 36px;
-          font-weight: 700;
-        }
-
-        .hero-stat-label {
-          color: var(--gold);
-          font-size: 9px;
-          font-weight: 600;
-          letter-spacing: 0.1em;
-          margin-top: -4px;
-        }
-
-        .hero-progress {
-          max-width: 320px;
-          margin: 0 auto;
+          padding: 20px;
           text-align: left;
         }
 
+        .hero-title {
+          color: var(--ink);
+          font-size: 20px;
+          font-weight: 600;
+          margin-bottom: 16px;
+        }
+
+        .hero-stats {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 16px;
+          margin-bottom: 8px;
+        }
+
+        .hero-stat-value {
+          color: var(--ink);
+          font-size: 28px;
+          font-weight: 600;
+          letter-spacing: -0.03em;
+        }
+
+        .hero-stat-label {
+          color: var(--ink-muted);
+          font-size: 13px;
+        }
+
+        .hero-progress {
+          margin-top: 8px;
+        }
+
         .target-label {
-          color: rgba(255, 255, 255, 0.5);
-          font-size: 9px;
-          text-align: center;
-          margin-top: -4px;
+          color: var(--ink-muted);
+          font-size: 13px;
+          margin-top: 4px;
         }
 
         .contributors-section {
-          margin: 40px 0;
-          text-align: center;
+          margin: 28px 0 8px;
         }
 
         .section-title {
-          color: var(--gold-dark);
-          font-size: 10px;
+          color: var(--ink);
+          font-size: 16px;
           font-weight: 600;
-          letter-spacing: 0.12em;
+          margin-bottom: 12px;
         }
 
         .ornament-rule-small {
@@ -848,35 +780,32 @@ const HubDetail: React.FC = () => {
 
         .contributor-count-block {
           display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 6px;
+          align-items: baseline;
+          gap: 8px;
         }
 
         .contributor-count-value {
-          font-size: 42px;
+          font-size: 28px;
           line-height: 1;
-          color: var(--navy);
+          font-weight: 600;
+          color: var(--ink);
         }
 
         .contributor-count-label {
-          color: var(--gold-dark);
-          font-size: 10px;
-          font-weight: 600;
-          letter-spacing: 0.12em;
+          color: var(--ink-muted);
+          font-size: 14px;
           margin: 0;
         }
 
         .empty-contrib {
-          font-style: italic;
           color: var(--ink-muted);
-          font-size: 16px;
+          font-size: 15px;
         }
 
         .payment-card {
-          padding: 24px;
+          padding: 20px;
           margin-bottom: 32px;
-          text-align: center;
+          text-align: left;
         }
 
         .qr-spread {
@@ -890,8 +819,8 @@ const HubDetail: React.FC = () => {
         .qr-frame {
           background: var(--white);
           padding: 12px;
-          border: 1px solid var(--gold);
-          box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+          border: 1px solid var(--border);
+          border-radius: 12px;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -932,18 +861,17 @@ const HubDetail: React.FC = () => {
         }
 
         .memo-container {
-          background: var(--white);
-          border: 1.5px solid var(--gold);
-          padding: 16px;
-          border-radius: var(--radius-sm);
+          background: var(--bg);
+          border: 1px solid var(--border);
+          padding: 14px;
+          border-radius: var(--radius-md);
           display: flex;
           justify-content: space-between;
           align-items: center;
           cursor: pointer;
           margin-top: 8px;
-          margin-bottom: 20px;
+          margin-bottom: 16px;
           text-align: left;
-          transition: all 0.2s;
         }
 
         .memo-container:active {
@@ -958,17 +886,15 @@ const HubDetail: React.FC = () => {
         }
 
         .memo-text {
-          font-family: 'Courier New', Courier, monospace;
+          font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
           font-size: 16px;
-          font-weight: 700;
-          color: var(--navy);
-          letter-spacing: 0.02em;
+          font-weight: 600;
+          color: var(--ink);
         }
 
         .memo-note {
-          font-size: 10px;
+          font-size: 12px;
           color: var(--ink-muted);
-          font-style: italic;
         }
 
         .warning-panel {
@@ -998,11 +924,11 @@ const HubDetail: React.FC = () => {
         }
 
         .pledge-lead {
-          font-size: 13px;
-          color: var(--ink-muted);
-          line-height: 1.45;
-          margin: 0 0 20px;
-          text-align: center;
+          font-size: 14px;
+          color: var(--ink-secondary);
+          line-height: 1.5;
+          margin: 16px 0 20px;
+          text-align: left;
         }
 
         .pledge-roster {
@@ -1019,9 +945,9 @@ const HubDetail: React.FC = () => {
           align-items: center;
           gap: 12px;
           padding: 10px 12px;
-          background: var(--cream-deep);
-          border: 1px solid rgba(201, 168, 76, 0.35);
-          border-radius: var(--radius-sm);
+          background: var(--bg);
+          border: 1px solid var(--border);
+          border-radius: var(--radius-md);
         }
 
         .pledge-member {
@@ -1047,7 +973,7 @@ const HubDetail: React.FC = () => {
           flex-shrink: 0;
           text-align: right;
           padding: 8px 10px;
-          border: 1px solid var(--gold);
+          border: 1px solid var(--border);
           border-radius: var(--radius-sm);
           background: var(--white);
           font-size: 14px;
@@ -1083,10 +1009,9 @@ const HubDetail: React.FC = () => {
         }
 
         .pledge-total {
-          text-align: center;
-          color: var(--navy);
-          font-size: 12px;
-          letter-spacing: 0.1em;
+          text-align: left;
+          color: var(--ink-secondary);
+          font-size: 13px;
           margin: 8px 0 20px;
         }
 
@@ -1099,8 +1024,8 @@ const HubDetail: React.FC = () => {
         }
 
         .success-inline {
-          text-align: center;
-          color: var(--green);
+          text-align: left;
+          color: var(--ink-secondary);
           margin-bottom: 16px;
         }
 

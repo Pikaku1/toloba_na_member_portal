@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { api } from "@tolobana/convex-backend/convex/_generated/api";
-import { ChevronDown, ChevronUp, Bell } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import PageMasthead from "../components/Layout/PageMasthead";
 import ListPageSkeleton from "../components/ListPageSkeleton";
 import { useAdminReadQuery } from "../hooks/useDbQuery";
@@ -13,10 +13,10 @@ const Announcements: React.FC = () => {
     const date = new Date(timestamp);
     if (full) {
       return date.toLocaleDateString(undefined, {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
       });
     }
 
@@ -28,244 +28,125 @@ const Announcements: React.FC = () => {
     if (diffDays < 7) return `${diffDays} days ago`;
 
     return date.toLocaleDateString(undefined, {
-      month: 'short',
-      day: 'numeric'
+      month: "short",
+      day: "numeric",
     });
   };
 
   if (announcements === undefined) {
     return (
       <div className="announcements-page">
-        <PageMasthead
-          title="Announcements"
-          subtitle="Latest from the organization"
-          kicker="DAERAT TOLOBA"
-          variant="navy"
-        />
+        <PageMasthead title="Updates" subtitle="Latest from Toloba NA" />
         <ListPageSkeleton rows={4} />
       </div>
     );
   }
 
-  // Fallback for local connection issues with the Admin server
-  const displayAnnouncements = announcements || [
-    {
-      _id: "mock1",
-      title: "Welcome to the New Portal",
-      body: "We are currently optimizing the connection to the Admin server. This is a preview of the new announcement design.",
-      created_at: Date.now(),
-      is_live: true
-    }
-  ];
+  const displayAnnouncements = announcements || [];
 
   return (
     <div className="announcements-page">
-      <PageMasthead
-        title="Announcements"
-        subtitle="Latest from the organization"
-        kicker="DAERAT TOLOBA"
-        variant="navy"
-      />
+      <PageMasthead title="Updates" subtitle="Latest from Toloba NA" />
 
-      <div className="container" style={{ paddingTop: '32px' }}>
+      <div className="container" style={{ paddingTop: 20 }}>
         {displayAnnouncements.length === 0 ? (
           <div className="empty-state">
-            <Bell size={44} style={{ color: 'var(--gold)', marginBottom: '12px' }} />
-            <div className="ornament-rule" style={{ maxWidth: '160px', margin: '0 auto 16px' }}>
-              <span style={{ fontSize: '14px' }}>✦</span>
-            </div>
-            <h3 className="display-font" style={{ fontStyle: 'italic', color: 'var(--ink-muted)' }}>No announcements yet.</h3>
-            <p className="meta" style={{ marginTop: '4px' }}>Check back soon.</p>
+            <h3>No announcements yet</h3>
+            <p className="meta">Check back soon.</p>
           </div>
         ) : (
-          <div className="chronicle-list">
-            <div className="timeline-line"></div>
-
-            <div className="list-stagger list-stagger--gap-md">
-            {displayAnnouncements.map((ann: any) => (
-              <div
-                key={ann._id}
-                className={`timeline-item list-stagger-item ${expandedId === ann._id ? "expanded" : ""}`}
-              >
-                <div className="timeline-marker">✦</div>
-
-                <div
-                  className={`card announcement-card ${expandedId === ann._id ? "expanded" : ""}`}
-                  onClick={() => setExpandedId(expandedId === ann._id ? null : ann._id)}
-                >
-                  <div className="card-top-info">
-                    <span className="accent-font kicker">ANNOUNCEMENT</span>
-                    <span className="ornament">✦</span>
-                  </div>
-
-                  <h2 className="display-font card-title">{ann.title}</h2>
-
-                  <div className="gold-rule-small"></div>
-
-                  <div className={`preview-content ${expandedId === ann._id ? "expanded" : ""}`}>
-                    {ann.body}
-                  </div>
-
-                  <div className="card-footer">
-                    <span className="accent-font date-text">
-                      {formatDate(ann.created_at, expandedId === ann._id)}
+          <div className="list-stagger list-stagger--gap-sm">
+            {displayAnnouncements.map((ann: any) => {
+              const open = expandedId === ann._id;
+              return (
+                <article key={ann._id} className="card announcement-card list-stagger-item">
+                  <button
+                    type="button"
+                    className="announcement-toggle"
+                    aria-expanded={open}
+                    onClick={() => setExpandedId(open ? null : ann._id)}
+                  >
+                    <div className="announcement-top">
+                      <h2>{ann.title}</h2>
+                      <time dateTime={new Date(ann.created_at).toISOString()}>
+                        {formatDate(ann.created_at, open)}
+                      </time>
+                    </div>
+                    <p className={`preview-content ${open ? "expanded" : ""}`}>{ann.body}</p>
+                    <span className="expand-action">
+                      {open ? "Show less" : "Show more"}
+                      {open ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                     </span>
-
-                    <div className="expand-action">
-                      <span className="accent-font">{expandedId === ann._id ? "LESS" : "MORE"}</span>
-                      {expandedId === ann._id ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                    </div>
-                  </div>
-
-                  {expandedId === ann._id && (
-                    <div className="ornament-rule" style={{ marginTop: '20px', marginBottom: '0' }}>
-                      <span style={{ fontSize: '10px' }}>✦</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
-            </div>
+                  </button>
+                </article>
+              );
+            })}
           </div>
         )}
       </div>
 
       <style>{`
         .announcements-page {
-          background-color: var(--cream);
           min-height: 100vh;
         }
 
-        .chronicle-list {
-          position: relative;
-          padding-left: 32px;
-        }
-
-        .timeline-line {
-          position: absolute;
-          left: 6px;
-          top: 0;
-          bottom: 0;
-          width: 1px;
-          background: linear-gradient(to bottom, var(--gold), transparent);
-          opacity: 0.6;
-        }
-
-        .timeline-item {
-          position: relative;
-        }
-
-        .timeline-marker {
-          position: absolute;
-          left: -32px;
-          top: 24px;
-          width: 14px;
-          height: 14px;
-          background: var(--cream);
-          color: var(--gold-dark);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 14px;
-          z-index: 1;
-        }
-
         .announcement-card {
-          cursor: pointer;
-          overflow: hidden;
+          padding: 0;
         }
 
-        .card-top-info {
+        .announcement-toggle {
+          width: 100%;
+          text-align: left;
+          background: none;
+          border: none;
+          padding: 16px;
+          cursor: pointer;
+          color: inherit;
+          font: inherit;
+        }
+
+        .announcement-top {
           display: flex;
           justify-content: space-between;
-          align-items: center;
-          margin-bottom: 12px;
-        }
-
-        .kicker {
-          color: var(--gold-dark);
-          font-size: 10px;
-          font-weight: 600;
-          letter-spacing: 0.16em;
-        }
-
-        .ornament {
-          color: var(--gold);
-          font-size: 12px;
-        }
-
-        .card-title {
-          font-size: 18px;
-          font-weight: 700;
-          color: var(--ink);
+          align-items: flex-start;
+          gap: 16px;
           margin-bottom: 8px;
-          line-height: 1.3;
         }
 
-        .gold-rule-small {
-          height: 1px;
-          background: linear-gradient(to right, var(--gold), transparent);
-          width: 60px;
-          margin-bottom: 16px;
+        .announcement-top h2 {
+          font-size: 16px;
+          font-weight: 600;
+          letter-spacing: -0.01em;
+        }
+
+        .announcement-top time {
+          flex-shrink: 0;
+          font-size: 13px;
+          color: var(--ink-muted);
+          margin-top: 2px;
         }
 
         .preview-content {
-          font-family: var(--font-ui);
           font-size: 15px;
           color: var(--ink-secondary);
-          line-height: 1.6;
-          max-height: 4.8em; 
+          line-height: 1.55;
+          max-height: 4.65em;
           overflow: hidden;
-          transition: max-height 0.3s ease, opacity 0.3s ease;
-          position: relative;
-        }
-
-        .preview-content:not(.expanded)::after {
-          content: '';
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          height: 1.6em;
-          background: linear-gradient(to bottom, transparent, var(--white));
         }
 
         .preview-content.expanded {
-          max-height: 2000px;
+          max-height: none;
           white-space: pre-wrap;
         }
 
-        .card-footer {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-top: 16px;
-          padding-top: 12px;
-          border-top: 1px solid rgba(232, 223, 200, 0.5);
-        }
-
-        .date-text {
-          color: var(--gold-dark);
-          font-size: 10px;
-          letter-spacing: 0.05em;
-        }
-
         .expand-action {
-          display: flex;
+          display: inline-flex;
           align-items: center;
           gap: 4px;
-          color: var(--gold-dark);
-        }
-
-        .expand-action span {
-          font-size: 10px;
+          margin-top: 12px;
+          font-size: 13px;
           font-weight: 600;
-          letter-spacing: 0.1em;
-        }
-
-        .empty-state {
-          text-align: center;
-          padding: 60px 0;
+          color: var(--brand);
         }
       `}</style>
     </div>
