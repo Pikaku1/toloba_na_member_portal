@@ -3,7 +3,6 @@ import { ConvexClientProvider } from "./ConvexClientProvider";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedLayout from "./components/Layout/ProtectedLayout";
 import HubGate from "./components/Layout/HubGate";
-import SessionRefresh from "./components/Layout/SessionRefresh";
 import AppErrorBoundary from "./components/AppErrorBoundary";
 
 // Pages (to be implemented)
@@ -20,7 +19,6 @@ function App() {
     <AppErrorBoundary>
       <ConvexClientProvider>
         <AuthProvider>
-          <SessionRefresh />
           <BrowserRouter>
             <Routes>
               <Route path="/login" element={<Login />} />

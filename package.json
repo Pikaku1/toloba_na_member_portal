@@ -13,7 +13,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tolobana/convex-backend": "git+https://github.com/vibe4bugs/tolobana_convex.git#aeaf3c6ca9c6347bd999ada4df0c1852883734fb",
+    "@auth/core": "^0.41.1",
+    "@convex-dev/auth": "^0.0.98",
+    "@tolobana/convex-backend": "git+https://github.com/vibe4bugs/tolobana_convex.git#7c9d6718a78a4db2fedd04292776d581db629513",
     "convex": "^1.36.1",
     "lucide-react": "^1.11.0",
     "qrcode.react": "^4.2.0",
