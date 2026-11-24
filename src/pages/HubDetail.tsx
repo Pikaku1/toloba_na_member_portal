@@ -92,9 +92,10 @@ const HubDetail: React.FC = () => {
 
   const isLeadershipCampaign =
     !!collection && collection.member_portal_audience !== "all_members";
+  const showChapterPledge = isLeadershipCampaign && member?.is_secretary === true;
 
   useEffect(() => {
-    if (!isLeadershipCampaign || !member?.its_number || !showPayment) return;
+    if (!showChapterPledge || !member?.its_number || !showPayment) return;
     let cancelled = false;
     setRosterLoading(true);
     setRosterError(null);
@@ -133,7 +134,7 @@ const HubDetail: React.FC = () => {
     return () => {
       cancelled = true;
     };
-  }, [isLeadershipCampaign, member?.its_number, showPayment, loadJamaatRoster]);
+  }, [showChapterPledge, member?.its_number, showPayment, loadJamaatRoster]);
 
   const pledgeTotal = useMemo(() => {
     let sum = 0;
@@ -383,7 +384,7 @@ const HubDetail: React.FC = () => {
           </div>
         ) : !showPayment ? (
           <button className="btn btn-navy" onClick={() => setShowPayment(true)} style={{ marginTop: '32px' }}>
-            {isLeadershipCampaign ? "Pay chapter pledge with Zelle" : "Pay with Zelle"}
+            {showChapterPledge ? "Pay chapter pledge with Zelle" : "Pay with Zelle"}
           </button>
         ) : (
           <div className="reveal-content route-outlet-enter">
@@ -392,7 +393,7 @@ const HubDetail: React.FC = () => {
               reference code. Payment is only verified after staff matches your bank deposit.
             </p>
 
-            {isLeadershipCampaign ? (
+            {showChapterPledge ? (
               <form onSubmit={handleSubmitChapterPledges} className="log-form">
                 <p className="pledge-lead">
                   Enter the chapter payment total, then break it down by member.

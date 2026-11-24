@@ -2,6 +2,7 @@ import { useConvexAuth, useAuthActions } from "@convex-dev/auth/react";
 import { useQuery } from "convex/react";
 import React, { createContext, useContext, useEffect } from "react";
 import { api } from "@tolobana/convex-backend/convex/_generated/api";
+import { isSecretaryRole } from "../roles";
 
 export interface Member {
   _id: string;
@@ -15,6 +16,8 @@ export interface Member {
   can_access_hub?: boolean;
   /** True for Designation=Coordinator — sees POC jamaat niyyat section. */
   is_poc?: boolean;
+  /** Secretary or Joint Secretary — logs chapter pledges for their jamaat. */
+  is_secretary?: boolean;
 }
 
 interface AuthContextType {
@@ -43,7 +46,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [authLoading, isAuthenticated, me, signOut]);
 
   const isLoading = authLoading || (isAuthenticated && me === undefined);
-  const member = me ?? null;
+  const member = me
+    ? { ...me, is_secretary: isSecretaryRole(me.designation) }
+    : null;
 
   return (
     <AuthContext.Provider value={{ member, isLoading, logout: () => void signOut() }}>

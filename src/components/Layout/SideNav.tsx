@@ -9,8 +9,9 @@ const items = [
   { to: "/announcements", label: "Updates", icon: Bell },
   { to: "/surveys", label: "Surveys", icon: ClipboardList },
   { to: "/hub", label: "Hub", icon: Heart, hub: true },
-  { to: "/account", label: "Account", icon: User },
 ] as const;
+
+const accountItem = { to: "/account", label: "Account" };
 
 const SideNav: React.FC = () => {
   const { member } = useAuth();
@@ -27,7 +28,7 @@ const SideNav: React.FC = () => {
         <span className="wordmark">Toloba NA</span>
       </div>
 
-      <nav aria-label="Primary">
+      <nav className="side-links" aria-label="Primary">
         {items.map((item) => {
           if ("hub" in item && item.hub && !showHub) return null;
           const Icon = item.icon;
@@ -42,6 +43,16 @@ const SideNav: React.FC = () => {
             </NavLink>
           );
         })}
+      </nav>
+
+      <nav className="side-account" aria-label="Account">
+        <NavLink
+          to={accountItem.to}
+          className={({ isActive }) => `side-link ${isActive ? "active" : ""}`}
+        >
+          <User size={16} strokeWidth={1.75} />
+          <span>{accountItem.label}</span>
+        </NavLink>
       </nav>
 
       <style>{`
@@ -86,10 +97,14 @@ const SideNav: React.FC = () => {
           letter-spacing: -0.02em;
         }
 
-        .side-nav nav {
+        .side-links {
           display: flex;
           flex-direction: column;
           gap: 4px;
+        }
+
+        .side-account {
+          margin-top: auto;
         }
 
         .side-link {
