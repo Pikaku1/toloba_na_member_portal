@@ -17,11 +17,13 @@
     "@convex-dev/auth": "^0.0.98",
     "@tolobana/convex-backend": "git+https://github.com/vibe4bugs/tolobana_convex.git#7c9d6718a78a4db2fedd04292776d581db629513",
     "convex": "^1.36.1",
+    "d3-geo": "^3.1.2",
     "lucide-react": "^1.11.0",
     "qrcode.react": "^4.2.0",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
-    "react-router-dom": "^7.14.2"
+    "react-router-dom": "^7.14.2",
+    "react-simple-maps": "^5.0.5"
   },
   "optionalDependencies": {
     "@rolldown/binding-linux-x64-gnu": "1.0.0-rc.17",
