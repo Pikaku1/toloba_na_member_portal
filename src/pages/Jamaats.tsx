@@ -214,8 +214,8 @@ const JamaatDirectory: React.FC<{
           list-style: none;
           background: var(--surface);
           border: 1px solid var(--border);
-          border-radius: 8px;
-          box-shadow: var(--shadow);
+          border-radius: 12px;
+          box-shadow: var(--shadow-pop);
         }
 
         .jamaat-matches button {

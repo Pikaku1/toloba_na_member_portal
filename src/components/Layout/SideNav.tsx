@@ -63,31 +63,30 @@ const SideNav: React.FC = () => {
           left: 0;
           bottom: 0;
           width: var(--nav-width);
-          background: var(--surface);
-          border-right: 1px solid var(--border);
+          background: transparent;
           z-index: 120;
           display: flex;
           flex-direction: column;
-          padding: 16px 10px;
+          padding: 22px 12px 16px;
         }
 
         .side-brand {
           display: flex;
           align-items: center;
           gap: 10px;
-          padding: 4px 8px 18px;
+          padding: 2px 10px 22px;
         }
 
         .brand-mark {
-          width: 28px;
-          height: 28px;
-          border-radius: 7px;
+          width: 26px;
+          height: 26px;
+          border-radius: 8px;
           background: var(--brand);
           color: white;
           display: grid;
           place-items: center;
           font-size: 13px;
-          font-weight: 700;
+          font-weight: 600;
           flex-shrink: 0;
         }
 
@@ -95,13 +94,13 @@ const SideNav: React.FC = () => {
           color: var(--ink);
           font-size: 15px;
           font-weight: 600;
-          letter-spacing: -0.02em;
+          letter-spacing: -0.03em;
         }
 
         .side-links {
           display: flex;
           flex-direction: column;
-          gap: 4px;
+          gap: 2px;
         }
 
         .side-account {
@@ -117,7 +116,7 @@ const SideNav: React.FC = () => {
           font-size: 14px;
           font-weight: 500;
           padding: 8px 10px;
-          border-radius: 8px;
+          border-radius: 10px;
         }
 
         .side-link svg {
@@ -125,14 +124,19 @@ const SideNav: React.FC = () => {
         }
 
         .side-link:hover {
-          background: var(--cream-deep);
+          background: rgba(18, 26, 22, 0.04);
           color: var(--ink);
         }
 
         .side-link.active {
-          background: var(--brand-soft);
-          color: var(--brand);
+          background: var(--surface);
+          color: var(--ink);
           font-weight: 600;
+          box-shadow: 0 0 0 1px rgba(18, 26, 22, 0.06);
+        }
+
+        .side-link.active svg {
+          color: var(--brand);
         }
 
         @media (max-width: 767px) {

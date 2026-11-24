@@ -70,8 +70,10 @@ const BottomNav: React.FC = () => {
           align-items: stretch;
           height: var(--tabbar-height);
           padding-bottom: env(safe-area-inset-bottom, 0px);
-          background: var(--surface);
-          border-top: 1px solid var(--border);
+          background: rgba(243, 244, 241, 0.84);
+          border-top: 1px solid rgba(18, 26, 22, 0.08);
+          backdrop-filter: blur(18px) saturate(1.4);
+          -webkit-backdrop-filter: blur(18px) saturate(1.4);
         }
 
         @media (min-width: 768px) {
@@ -94,7 +96,8 @@ const BottomNav: React.FC = () => {
 
         .tab-item span {
           font-size: 11px;
-          font-weight: 600;
+          font-weight: 500;
+          letter-spacing: -0.01em;
           line-height: 1.1;
         }
 

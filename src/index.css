@@ -1,15 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
 
 :root {
-  --bg: #F4F6F5;
+  --bg: #F3F4F1;
   --surface: #FFFFFF;
-  --border: #E2E6E3;
-  --ink: #16211C;
-  --ink-secondary: #3C4943;
-  --ink-muted: #66716B;
+  --border: rgba(18, 26, 22, 0.08);
+  --ink: #121A16;
+  --ink-secondary: #3A4640;
+  --ink-muted: #6E7872;
   --brand: #1B4332;
   --brand-hover: #245C44;
-  --brand-soft: #E7F2EB;
+  --brand-soft: #E7F3EC;
   --danger: #B42318;
   --danger-bg: #FEF3F2;
   --success: #067647;
@@ -38,15 +38,16 @@
   --warning-border: #F5D58A;
   --warning-text: #7A4E09;
 
-  --font-display: 'Source Sans 3', system-ui, sans-serif;
-  --font-ui: 'Source Sans 3', system-ui, sans-serif;
-  --font-accent: 'Source Sans 3', system-ui, sans-serif;
-  --font-signature: 'Source Sans 3', system-ui, sans-serif;
+  --font-display: 'Instrument Sans', system-ui, sans-serif;
+  --font-ui: 'Instrument Sans', system-ui, sans-serif;
+  --font-accent: 'Instrument Sans', system-ui, sans-serif;
+  --font-signature: 'Instrument Sans', system-ui, sans-serif;
 
-  --radius-sm: 6px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --shadow: 0 1px 2px rgba(22, 33, 28, 0.05);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --shadow: none;
+  --shadow-pop: 0 12px 32px rgba(18, 26, 22, 0.1);
 
   --transition-fast: 150ms ease;
   --transition-standard: 200ms ease;
@@ -84,8 +85,8 @@ body {
 h1, h2, h3, .display-font {
   font-family: var(--font-ui);
   font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1.25;
+  letter-spacing: -0.035em;
+  line-height: 1.2;
   font-style: normal;
 }
 
@@ -124,8 +125,20 @@ h1, h2, h3, .display-font {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 16px;
+  padding: 18px;
   box-shadow: var(--shadow);
+}
+
+.survey-card,
+.hub-card,
+.announcement-card {
+  transition: border-color var(--transition-fast);
+}
+
+.survey-card:hover,
+.hub-card:hover,
+.announcement-card:hover {
+  border-color: rgba(18, 26, 22, 0.16);
 }
 
 .card-dark {
@@ -157,7 +170,7 @@ textarea,
 select {
   width: 100%;
   background: var(--surface);
-  border: 1px solid #D5DAD7;
+  border: 1px solid rgba(18, 26, 22, 0.12);
   border-radius: var(--radius-md);
   height: 48px;
   padding: 0 14px;
@@ -298,7 +311,7 @@ textarea::placeholder {
 }
 
 .page-header {
-  padding: 28px 0 4px;
+  padding: 32px 0 8px;
 }
 
 .masthead-inner {
@@ -308,7 +321,7 @@ textarea::placeholder {
 }
 
 .page-header h1 {
-  font-size: 26px;
+  font-size: 28px;
   font-weight: 600;
   color: var(--ink);
 }
@@ -371,7 +384,7 @@ textarea::placeholder {
   flex-direction: column;
 }
 
-.list-stagger--gap-sm { gap: 12px; }
+.list-stagger--gap-sm { gap: 10px; }
 .list-stagger--gap-md { gap: 12px; }
 
 .list-stagger > .list-stagger-item {

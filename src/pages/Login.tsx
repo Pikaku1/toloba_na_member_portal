@@ -194,9 +194,9 @@ const Login: React.FC = () => {
           max-width: 420px;
           background: var(--surface);
           border: 1px solid var(--border);
-          border-radius: 16px;
-          box-shadow: var(--shadow);
-          padding: 28px 24px 24px;
+          border-radius: 20px;
+          box-shadow: var(--shadow-pop);
+          padding: 32px 28px 28px;
         }
 
         .login-brand {
@@ -209,7 +209,7 @@ const Login: React.FC = () => {
         .login-mark {
           width: 36px;
           height: 36px;
-          border-radius: 8px;
+          border-radius: 10px;
           background: var(--brand);
           color: white;
           display: grid;
@@ -231,8 +231,8 @@ const Login: React.FC = () => {
         }
 
         .login-card h1 {
-          font-size: 24px;
-          margin-bottom: 4px;
+          font-size: 28px;
+          margin-bottom: 6px;
         }
 
         .login-lead {
