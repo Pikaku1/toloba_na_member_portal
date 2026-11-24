@@ -13,6 +13,7 @@ import SurveyDetail from "./pages/SurveyDetail";
 import Hub from "./pages/Hub";
 import HubDetail from "./pages/HubDetail";
 import Account from "./pages/Account";
+import Jamaats from "./pages/Jamaats";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
                   <Route path="/hub" element={<Hub />} />
                   <Route path="/hub/:slug" element={<HubDetail />} />
                 </Route>
+                <Route path="/jamaats" element={<Jamaats />} />
                 <Route path="/account" element={<Account />} />
               </Route>
 

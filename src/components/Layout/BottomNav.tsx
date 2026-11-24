@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import { Bell, ClipboardList, Heart, User } from "lucide-react";
+import { Bell, ClipboardList, Heart, MapPin, User } from "lucide-react";
 import { api } from "@tolobana/convex-backend/convex/_generated/api";
 import { useAuth } from "../../context/AuthContext";
 import { useAdminReadQuery } from "../../hooks/useDbQuery";
@@ -34,6 +34,13 @@ const BottomNav: React.FC = () => {
       >
         <ClipboardList size={18} strokeWidth={1.75} />
         <span>Surveys</span>
+      </NavLink>
+      <NavLink
+        to="/jamaats"
+        className={({ isActive }) => `tab-item ${isActive ? "active" : ""}`}
+      >
+        <MapPin size={18} strokeWidth={1.75} />
+        <span>Map</span>
       </NavLink>
       {showHub && (
         <NavLink
