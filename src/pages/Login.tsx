@@ -1,16 +1,37 @@
-import React, { useState, useEffect } from "react";
-import { useMutation } from "convex/react";
+import { useAuthActions } from "@convex-dev/auth/react";
+import { useAction } from "convex/react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { api } from "@tolobana/convex-backend/convex/_generated/api";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+
+function messageFrom(err: unknown): string {
+  if (
+    err &&
+    typeof err === "object" &&
+    "data" in err &&
+    typeof err.data === "string"
+  ) {
+    return err.data;
+  }
+  if (err instanceof Error) {
+    const match = err.message.match(/Uncaught (?:Convex)?Error: ([^\n]+)/);
+    if (match?.[1]) return match[1];
+  }
+  return "Something went wrong. Please try again.";
+}
 
 const Login: React.FC = () => {
   const [itsNumber, setItsNumber] = useState("");
+  const [code, setCode] = useState("");
+  const [maskedEmail, setMaskedEmail] = useState<string | null>(null);
+  const [devCode, setDevCode] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const loginMutation = useMutation(api.members.login);
-  const { login, member } = useAuth();
+  const requestCode = useAction(api.memberSignInAction.requestSignInCode);
+  const { signIn } = useAuthActions();
+  const { member } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,25 +40,36 @@ const Login: React.FC = () => {
     }
   }, [member, navigate]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleRequestCode = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!itsNumber) return;
 
     setError(null);
     setIsSubmitting(true);
-
     try {
-      const result = await loginMutation({ its_number: itsNumber });
-      if (result) {
-        login(result);
-        navigate("/announcements");
-      } else {
-        setError("ITS number not recognised. Contact your administrator.");
-      }
+      const result = await requestCode({ its_number: itsNumber });
+      setMaskedEmail(result.masked_email);
+      setDevCode(result.dev_code ?? null);
+      setCode("");
     } catch (err) {
-      console.error("Login error", err);
-      setError("Something went wrong. Please try again.");
+      console.error("Sign-in code error", err);
+      setError(messageFrom(err));
     } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleSubmitCode = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (code.length !== 6) return;
+
+    setError(null);
+    setIsSubmitting(true);
+    try {
+      await signIn("its", { its_number: itsNumber, code });
+    } catch (err) {
+      console.error("Sign-in error", err);
+      setError(messageFrom(err));
       setIsSubmitting(false);
     }
   };
@@ -54,38 +86,92 @@ const Login: React.FC = () => {
         </div>
 
         <h1>Sign in</h1>
-        <p className="login-lead">Enter your ITS number to continue.</p>
+        {maskedEmail ? (
+          <p className="login-lead">Enter the code sent to {maskedEmail}.</p>
+        ) : (
+          <p className="login-lead">Enter your ITS number. We email a code to the address on file.</p>
+        )}
 
-        <form onSubmit={handleSubmit}>
-          <div className="input-group">
-            <label htmlFor="its_number">ITS number</label>
-            <input
-              id="its_number"
-              type="text"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              placeholder="Enter ITS number"
-              value={itsNumber}
-              onChange={(e) => setItsNumber(e.target.value.replace(/\D/g, ""))}
-              autoFocus
+        {maskedEmail ? (
+          <form onSubmit={handleSubmitCode}>
+            <div className="input-group">
+              <label htmlFor="code">Code</label>
+              <input
+                id="code"
+                type="text"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                pattern="[0-9]*"
+                maxLength={6}
+                placeholder="6-digit code"
+                value={code}
+                onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                autoFocus
+                disabled={isSubmitting}
+              />
+              {devCode && (
+                <p className="login-dev-code">Development code: {devCode}</p>
+              )}
+              {error && (
+                <p className="field-error" role="alert">
+                  {error}
+                </p>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              className="btn btn-navy"
+              disabled={isSubmitting || code.length !== 6}
+            >
+              {isSubmitting ? <div className="loading-spinner" /> : "Sign in"}
+            </button>
+            <button
+              type="button"
+              className="btn btn-ghost login-back"
               disabled={isSubmitting}
-              autoComplete="username"
-            />
-            {error && (
-              <p className="field-error" role="alert">
-                {error}
-              </p>
-            )}
-          </div>
+              onClick={() => {
+                setMaskedEmail(null);
+                setDevCode(null);
+                setCode("");
+                setError(null);
+              }}
+            >
+              Use a different ITS number
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={handleRequestCode}>
+            <div className="input-group">
+              <label htmlFor="its_number">ITS number</label>
+              <input
+                id="its_number"
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                placeholder="Enter ITS number"
+                value={itsNumber}
+                onChange={(e) => setItsNumber(e.target.value.replace(/\D/g, ""))}
+                autoFocus
+                disabled={isSubmitting}
+                autoComplete="username"
+              />
+              {error && (
+                <p className="field-error" role="alert">
+                  {error}
+                </p>
+              )}
+            </div>
 
-          <button
-            type="submit"
-            className="btn btn-navy"
-            disabled={isSubmitting || !itsNumber}
-          >
-            {isSubmitting ? <div className="loading-spinner" /> : "Sign in"}
-          </button>
-        </form>
+            <button
+              type="submit"
+              className="btn btn-navy"
+              disabled={isSubmitting || !itsNumber}
+            >
+              {isSubmitting ? <div className="loading-spinner" /> : "Email me a code"}
+            </button>
+          </form>
+        )}
       </div>
 
       <style>{`
@@ -153,6 +239,17 @@ const Login: React.FC = () => {
           color: var(--ink-muted);
           font-size: 15px;
           margin-bottom: 24px;
+        }
+
+        .login-dev-code {
+          margin-top: 8px;
+          font-size: 13px;
+          color: var(--ink-muted);
+        }
+
+        .login-back {
+          margin-top: 8px;
+          width: 100%;
         }
       `}</style>
     </div>

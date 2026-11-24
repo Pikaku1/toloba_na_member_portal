@@ -1,4 +1,7 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import { useConvexAuth, useAuthActions } from "@convex-dev/auth/react";
+import { useQuery } from "convex/react";
+import React, { createContext, useContext, useEffect } from "react";
+import { api } from "@tolobana/convex-backend/convex/_generated/api";
 
 export interface Member {
   _id: string;
@@ -17,41 +20,33 @@ export interface Member {
 interface AuthContextType {
   member: Member | null;
   isLoading: boolean;
-  login: (member: Member) => void;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [member, setMember] = useState<Member | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { isAuthenticated, isLoading: authLoading } = useConvexAuth();
+  const { signOut } = useAuthActions();
+  const me = useQuery(
+    api.members.me,
+    authLoading || !isAuthenticated ? "skip" : {},
+  );
 
   useEffect(() => {
-    const savedMember = localStorage.getItem("tolobana_member");
-    if (savedMember) {
-      try {
-        setMember(JSON.parse(savedMember));
-      } catch (e) {
-        console.error("Failed to parse saved member", e);
-        localStorage.removeItem("tolobana_member");
-      }
-    }
-    setIsLoading(false);
+    localStorage.removeItem("tolobana_member");
   }, []);
 
-  const login = (memberData: Member) => {
-    setMember(memberData);
-    localStorage.setItem("tolobana_member", JSON.stringify(memberData));
-  };
+  useEffect(() => {
+    if (authLoading || !isAuthenticated || me !== null) return;
+    void signOut();
+  }, [authLoading, isAuthenticated, me, signOut]);
 
-  const logout = () => {
-    setMember(null);
-    localStorage.removeItem("tolobana_member");
-  };
+  const isLoading = authLoading || (isAuthenticated && me === undefined);
+  const member = me ?? null;
 
   return (
-    <AuthContext.Provider value={{ member, isLoading, login, logout }}>
+    <AuthContext.Provider value={{ member, isLoading, logout: () => void signOut() }}>
       {children}
     </AuthContext.Provider>
   );
