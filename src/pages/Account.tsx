@@ -2,6 +2,7 @@ import React from "react";
 import { useAuth } from "../context/AuthContext";
 import { LogOut } from "lucide-react";
 import PageMasthead from "../components/Layout/PageMasthead";
+import NotificationSection from "../components/Account/NotificationSection";
 import PocNiyyatSection from "../components/Account/PocNiyyatSection";
 
 const Account: React.FC = () => {
@@ -30,6 +31,8 @@ const Account: React.FC = () => {
         </section>
 
         <PocNiyyatSection />
+
+        <NotificationSection />
 
         <button className="btn btn-ghost sign-out" onClick={logout}>
           <LogOut size={16} />
