@@ -129,20 +129,29 @@ const SurveyDetail: React.FC = () => {
         <style>{`
           .success-overlay {
             min-height: 100vh;
+            min-height: 100dvh;
             background: var(--bg);
             display: flex;
-            align-items: center;
+            align-items: flex-end;
             justify-content: center;
-            padding: 24px 20px;
+            padding: 0;
           }
           .success-panel {
             width: 100%;
-            max-width: 420px;
+            max-width: none;
             background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 32px 24px;
+            border-radius: 16px 16px 0 0;
+            padding: 24px 16px calc(24px + env(safe-area-inset-bottom, 0px));
             text-align: center;
+          }
+          @media (min-width: 768px) {
+            .success-overlay { align-items: center; padding: 24px; }
+            .success-panel {
+              max-width: 420px;
+              border-radius: 12px;
+              padding: 32px 24px;
+            }
           }
           .check-icon {
             width: 44px;
@@ -220,7 +229,7 @@ const SurveyDetail: React.FC = () => {
         .survey-detail-page {
           background-color: var(--cream);
           min-height: 100vh;
-          padding-top: 64px;
+          padding-top: calc(64px + env(safe-area-inset-top, 0px));
         }
 
         .sticky-header {
@@ -228,8 +237,9 @@ const SurveyDetail: React.FC = () => {
           top: 0;
           left: var(--nav-width);
           right: 0;
-          background: var(--surface);
+          background: var(--bg);
           border-bottom: 1px solid var(--border);
+          padding-top: env(safe-area-inset-top, 0px);
           z-index: 100;
         }
 
