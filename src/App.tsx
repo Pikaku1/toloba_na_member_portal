@@ -14,6 +14,7 @@ import Hub from "./pages/Hub";
 import HubDetail from "./pages/HubDetail";
 import Account from "./pages/Account";
 import Jamaats from "./pages/Jamaats";
+import MyJamaat from "./pages/MyJamaat";
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
                   <Route path="/hub/:slug" element={<HubDetail />} />
                 </Route>
                 <Route path="/jamaats" element={<Jamaats />} />
+                <Route path="/my-jamaat" element={<MyJamaat />} />
                 <Route path="/account" element={<Account />} />
               </Route>
 
