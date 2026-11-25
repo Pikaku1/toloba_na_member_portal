@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { Bell, ClipboardList, Heart, MapPin, User } from "lucide-react";
+import { Bell, ClipboardList, Heart, MapPin, User, Users } from "lucide-react";
 import { api } from "@tolobana/convex-backend/convex/_generated/api";
 import { useAuth } from "../../context/AuthContext";
 import { useAdminReadQuery } from "../../hooks/useDbQuery";
@@ -9,6 +9,7 @@ const items = [
   { to: "/announcements", label: "Updates", icon: Bell },
   { to: "/surveys", label: "Surveys", icon: ClipboardList },
   { to: "/jamaats", label: "Map", icon: MapPin },
+  { to: "/my-jamaat", label: "My Jamaat", icon: Users },
   { to: "/hub", label: "Hub", icon: Heart, hub: true },
 ] as const;
 
