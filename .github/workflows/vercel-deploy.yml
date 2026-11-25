@@ -125,6 +125,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    env:
+      VITE_CONVEX_URL_MEMBER: https://fortunate-ox-402.convex.cloud
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -191,6 +193,17 @@ jobs:
       - name: Write CI env file for build
         run: |
           : > .env.production.local
+          python3 <<'PY'
+          from pathlib import Path
+          url = "https://fortunate-ox-402.convex.cloud"
+          path = Path(".vercel/.env.production.local")
+          lines = path.read_text().splitlines() if path.exists() else []
+          kept = [line for line in lines if not line.startswith("VITE_CONVEX_URL_MEMBER=")]
+          kept.append(f"VITE_CONVEX_URL_MEMBER={url}")
+          path.parent.mkdir(parents=True, exist_ok=True)
+          path.write_text("\n".join(kept) + "\n")
+          print("Production member database: fortunate-ox-402")
+          PY
 
       - name: Build prebuilt artifacts (Production)
         env:
