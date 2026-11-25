@@ -194,9 +194,9 @@ const Login: React.FC = () => {
           max-width: 420px;
           background: var(--surface);
           border: 1px solid var(--border);
-          border-radius: 20px;
-          box-shadow: var(--shadow-pop);
-          padding: 32px 28px 28px;
+          border-radius: 12px;
+          box-shadow: none;
+          padding: 32px 24px;
         }
 
         .login-brand {

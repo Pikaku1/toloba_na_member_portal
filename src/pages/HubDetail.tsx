@@ -660,7 +660,7 @@ const HubDetail: React.FC = () => {
         .hub-detail-page {
           background-color: var(--cream);
           min-height: 100vh;
-          padding-top: 64px;
+          padding-top: calc(64px + env(safe-area-inset-top, 0px));
         }
 
         .sticky-header {
@@ -668,8 +668,9 @@ const HubDetail: React.FC = () => {
           top: 0;
           left: var(--nav-width);
           right: 0;
-          background: var(--surface);
+          background: var(--bg);
           border-bottom: 1px solid var(--border);
+          padding-top: env(safe-area-inset-top, 0px);
           z-index: 100;
         }
 

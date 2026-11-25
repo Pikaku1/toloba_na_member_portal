@@ -212,10 +212,10 @@ const JamaatDirectory: React.FC<{
           margin: 0;
           padding: 4px;
           list-style: none;
-          background: var(--surface);
+          background: var(--bg);
           border: 1px solid var(--border);
-          border-radius: 12px;
-          box-shadow: var(--shadow-pop);
+          border-radius: 8px;
+          box-shadow: none;
         }
 
         .jamaat-matches button {
@@ -223,8 +223,8 @@ const JamaatDirectory: React.FC<{
           text-align: left;
           background: transparent;
           border: 0;
-          border-radius: 6px;
-          padding: 10px 12px;
+          border-radius: 8px;
+          padding: 8px 12px;
           font: inherit;
           font-size: 15px;
           font-weight: 600;
@@ -235,7 +235,8 @@ const JamaatDirectory: React.FC<{
         .jamaat-matches button:hover,
         .jamaat-matches button:focus-visible,
         .jamaat-matches button.active {
-          background: var(--brand-soft);
+          background: var(--surface-hover);
+          color: var(--brand);
         }
 
         .jamaat-empty {

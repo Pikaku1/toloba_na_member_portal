@@ -64,18 +64,20 @@ const SideNav: React.FC = () => {
           left: 0;
           bottom: 0;
           width: var(--nav-width);
-          background: transparent;
+          background: var(--surface);
+          border-right: 1px solid var(--border);
           z-index: 120;
           display: flex;
           flex-direction: column;
-          padding: 22px 12px 16px;
+          padding: 24px 8px 16px;
+          padding-top: calc(24px + env(safe-area-inset-top, 0px));
         }
 
         .side-brand {
           display: flex;
           align-items: center;
-          gap: 10px;
-          padding: 2px 10px 22px;
+          gap: 8px;
+          padding: 0 8px 24px;
         }
 
         .brand-mark {
@@ -111,13 +113,13 @@ const SideNav: React.FC = () => {
         .side-link {
           display: flex;
           align-items: center;
-          gap: 10px;
+          gap: 8px;
           text-decoration: none;
           color: var(--ink-secondary);
           font-size: 14px;
           font-weight: 500;
-          padding: 8px 10px;
-          border-radius: 10px;
+          padding: 8px;
+          border-radius: 8px;
         }
 
         .side-link svg {
@@ -125,15 +127,14 @@ const SideNav: React.FC = () => {
         }
 
         .side-link:hover {
-          background: rgba(18, 26, 22, 0.04);
+          background: var(--surface-hover);
           color: var(--ink);
         }
 
         .side-link.active {
-          background: var(--surface);
-          color: var(--ink);
+          background: transparent;
+          color: var(--brand);
           font-weight: 600;
-          box-shadow: 0 0 0 1px rgba(18, 26, 22, 0.06);
         }
 
         .side-link.active svg {

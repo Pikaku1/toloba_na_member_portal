@@ -77,10 +77,8 @@ const BottomNav: React.FC = () => {
           align-items: stretch;
           height: var(--tabbar-height);
           padding-bottom: env(safe-area-inset-bottom, 0px);
-          background: rgba(243, 244, 241, 0.84);
-          border-top: 1px solid rgba(18, 26, 22, 0.08);
-          backdrop-filter: blur(18px) saturate(1.4);
-          -webkit-backdrop-filter: blur(18px) saturate(1.4);
+          background: var(--bg);
+          border-top: 1px solid var(--border);
         }
 
         @media (min-width: 768px) {
