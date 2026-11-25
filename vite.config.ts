@@ -46,12 +46,14 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,jpg,jpeg,svg,woff2,json}'],
+        importScripts: ['push-sw.js?v=1'],
         cleanupOutdatedCaches: true,
         clientsClaim: true,
         skipWaiting: true,
       },
       devOptions: {
-        enabled: false,
+        enabled: true,
+        type: 'classic',
       },
     }),
   ],
