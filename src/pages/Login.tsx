@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "@tolobana/convex-backend/convex/_generated/api";
 import { useAuth } from "../context/AuthContext";
+import InstallApp from "../components/InstallApp";
 
 function messageFrom(err: unknown): string {
   if (
@@ -172,6 +173,7 @@ const Login: React.FC = () => {
             </button>
           </form>
         )}
+        <InstallApp />
       </div>
 
       <style>{`
